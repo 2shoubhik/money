@@ -1,0 +1,49 @@
+{
+  "_readme": "Each entry in `portfolios` becomes a tab at /portfolio/<id>/. weight = % of THAT portfolio (should sum to 100). entryPrice is optional: leave it out and the close on entryDate is used. Tickers use Yahoo Finance symbols (TSX: .TO, NSE: .NS, BSE: .BO). currency = what returns are measured in.",
+  "portfolios": [
+    {
+      "id": "us",
+      "name": "US & Canada",
+      "currency": "USD",
+      "inceptionDate": "2025-01-02",
+      "benchmarks": [
+        { "symbol": "^GSPC", "name": "S&P 500" },
+        { "symbol": "^GSPTSE", "name": "S&P/TSX Composite" }
+      ],
+      "holdings": [
+        { "ticker": "SNPS", "name": "Synopsys", "sector": "Technology", "weight": 30, "entryDate": "2025-01-02", "post": "snps-thesis" },
+        { "ticker": "GOOGL", "name": "Alphabet", "sector": "Internet", "weight": 5, "entryDate": "2025-01-02" },
+        { "ticker": "COST", "name": "Costco", "sector": "Retail", "weight": 5, "entryDate": "2025-01-02" },
+        { "ticker": "MFC.TO", "name": "Manulife Financial Corp.", "sector": "Financials", "weight": 15, "entryDate": "2025-03-03" },
+        { "ticker": "SHOP.TO", "name": "Shopify", "sector": "Software", "weight": 5, "entryDate": "2025-04-07" },
+        { "ticker": "BTC-USD", "name": "Bitcoin", "sector": "Cryptocurrency", "weight": 20, "entryDate": "2025-06-02" },
+        { "ticker": "CASH", "name": "Cash", "sector": "Cash", "weight": 20 }
+      ],
+      "watchlist": [
+        { "ticker": "AVGO", "name": "Broadcom", "note": "Waiting for a better entry after the cycle bottoms.", "post": "avgo-deep-dive" },
+        { "ticker": "CRWV", "name": "CoreWeave", "note": "Studying Debt structure alongside growth potential." },
+        { "ticker": "VST", "name": "Vistra", "note": "Monitoring Volatility ; studying fundamentals" }
+      ]
+    },
+    {
+      "id": "india",
+      "name": "India",
+      "currency": "INR",
+      "inceptionDate": "2025-03-03",
+      "benchmarks": [
+        { "symbol": "NIFTYSMLCAP250.NS", "name": "Nifty Smallcap 250" },
+        { "symbol": "^NSEI", "name": "Nifty 50" }
+      ],
+      "holdings": [
+        { "ticker": "TIIL.NS", "name": "Technocraft Industries", "sector": "Industrials", "weight": 18.2, "entryDate": "2025-03-03", "post": "tiil-deep-dive" },
+        { "ticker": "QPOWER.NS", "name": "Quality Power Electrical Equipments", "sector": "Capital Goods", "weight": 17.17, "entryDate": "2025-03-03" },
+        { "ticker": "SBCL.NS", "name": "Shivalik Bimetal Controls", "sector": "Capital Goods", "weight": 10.24, "entryDate": "2025-03-03" },
+        { "ticker": "SHILPAMED.NS", "name": "Shilpa Medicare", "sector": "Pharma", "weight": 10.93, "entryDate": "2025-03-03" },
+        { "ticker": "NRBBEARING.NS", "name": "NRB Bearings", "sector": "Auto Components", "weight": 10.5, "entryDate": "2025-03-03" },
+        { "ticker": "GUFICBIO.NS", "name": "Gufic Biosciences", "sector": "Pharma", "weight": 16.11, "entryDate": "2025-03-03" },
+        { "ticker": "ANANDRATHI.NS", "name": "Anand Rathi Wealth", "sector": "Financials", "weight": 16.84, "entryDate": "2025-03-03" }
+      ],
+      "watchlist": []
+    }
+  ]
+}

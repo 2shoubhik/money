@@ -1,0 +1,22 @@
+---
+import Base from "../layouts/Base.astro";
+import { site } from "../config.js";
+---
+<Base title="About & disclosures">
+  <div class="prose">
+    <h1>About & disclosures</h1>
+    <p>I'm {site.author}. <em>(Add a short bio: your background, how long you've invested, and why you started this.)</em></p>
+
+    <h2>Disclosures</h2>
+    <ul>
+      <li><strong>Not investment advice.</strong> Everything on this site and on my X account is personal opinion and research, published for educational purposes. It isn't a recommendation to buy, sell or hold any security, and it doesn't consider your financial situation.</li>
+      <li><strong>I'm not a registered adviser.</strong> I'm not registered with the SEC, FINRA, any Canadian securities regulator, or SEBI as an investment adviser or research analyst.</li>
+      <li><strong>I own what I write about.</strong> Each post states my position at the time of writing. I may buy or sell at any time without notice, and I log changes on the <a href="/portfolio/">portfolio page</a>.</li>
+      <li><strong>No compensation.</strong> I'm not paid by any company I cover. <em>(Update this if that ever changes.)</em></li>
+      <li><strong>Data may be wrong.</strong> Prices come from third-party sources and can be delayed or inaccurate. Performance is for a model portfolio, isn't audited, and past results don't predict future returns.</li>
+    </ul>
+
+    <h2>Contact</h2>
+    <p>The best way to reach me is on X: <a href={`https://x.com/${site.xHandle}`}>@{site.xHandle}</a>.</p>
+  </div>
+</Base>

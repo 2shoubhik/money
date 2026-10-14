@@ -1,0 +1,19 @@
+---
+import { fmtDate } from "../lib/posts.js";
+const { posts } = Astro.props;
+---
+<ul class="post-list">
+  {posts.map((p) => (
+    <li>
+      <a class="card" href={`/research/${p.slug}/`}>
+        <div class="meta">
+          <span>{fmtDate(p.date)}</span>
+          {p.position && <span class="chip">{p.position}</span>}
+          {(p.tickers ?? []).map((t) => <span class="chip">${t}</span>)}
+        </div>
+        <h3>{p.title}</h3>
+        <p>{p.summary}</p>
+      </a>
+    </li>
+  ))}
+</ul>

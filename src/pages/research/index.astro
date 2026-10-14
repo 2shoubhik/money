@@ -1,0 +1,12 @@
+---
+import Base from "../../layouts/Base.astro";
+import PostList from "../../components/PostList.astro";
+import { posts } from "../../lib/posts.js";
+const tickers = [...new Set(posts.flatMap((p) => p.tickers ?? []))].sort();
+---
+<Base title="Research" description="Deep dives and updates on the companies I own or follow.">
+  <h1>Research</h1>
+  <p class="muted">Deep dives, thesis updates and earnings notes. Every post says whether I own the stock.</p>
+  {tickers.length > 0 && <p class="meta" style="margin:16px 0 24px">Covered: {tickers.map((t) => <span class="chip">${t}</span>)}</p>}
+  <PostList posts={posts} />
+</Base>

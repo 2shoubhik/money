@@ -1,0 +1,128 @@
+---
+import Base from "../../layouts/Base.astro";
+import PerformanceChart from "../../components/PerformanceChart.astro";
+import { posts } from "../../lib/posts.js";
+import { portfolios, fmtPct, fmtPrice } from "../../lib/portfolio.js";
+
+export function getStaticPaths() {
+  return portfolios.map((p) => ({ params: { id: p.id }, props: { p } }));
+}
+const { p } = Astro.props;
+const { holdings, watchlist, performance, summary, asOf, currency } = p;
+if (Math.abs(p.weightSum - 100) > 0.1) console.warn(`[portfolio] "${p.name}" weights sum to ${p.weightSum}%, not 100%`);
+
+const postFor = (slug) => posts.find((x) => x.slug === slug);
+const sectors = Object.entries(
+  holdings.reduce((acc, h) => ((acc[h.sector] = (acc[h.sector] ?? 0) + h.weight), acc), {})
+).sort((a, b) => b[1] - a[1]);
+const maxW = Math.max(...holdings.map((h) => h.weight));
+const alpha = summary.sinceInception - summary.benchmark;
+const asOfLong = new Date(asOf + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+const benchNames = p.benchmarks.map((b) => b.name).join(" and ");
+---
+<Base title={`Portfolio: ${p.name}`} description={`My ${p.name} portfolio: holdings, weights and performance against the ${benchNames}.`}>
+  <h1>Portfolio</h1>
+  <nav class="tabs" aria-label="Portfolios">
+    {portfolios.map((t) => <a href={`/portfolio/${t.id}/`} aria-current={t.id === p.id ? "page" : undefined}>{t.name}</a>)}
+  </nav>
+  <p class="muted">Prices as of {asOfLong}. Weights and % returns only, no position sizes. Returns in {currency}.</p>
+
+  <div class="tiles" style="margin-top:24px">
+    <div class="card tile">
+      <div class="label">Since inception</div>
+      <div class={`value ${summary.sinceInception >= 0 ? "" : ""}`}>{fmtPct(summary.sinceInception)}</div>
+      <div class="sub">from {new Date(summary.inceptionDate + "T12:00:00").toLocaleDateString("en-US", { month: "short", year: "numeric" })}</div>
+    </div>
+    <div class="card tile">
+      <div class="label">{summary.benchmarkName}, same period</div>
+      <div class="value">{fmtPct(summary.benchmark)}</div>
+      <div class="sub">total return</div>
+    </div>
+    <div class="card tile">
+      <div class="label">Excess return</div>
+      <div class={`value ${alpha >= 0 ? "up" : "down"}`}>{fmtPct(alpha)}</div>
+      <div class="sub">{alpha >= 0 ? "ahead of" : "behind"} the {summary.benchmarkName}</div>
+    </div>
+    <div class="card tile">
+      <div class="label">Positions</div>
+      <div class="value">{summary.positions}</div>
+      <div class="sub">{summary.cash}% in cash</div>
+    </div>
+  </div>
+
+  <div style="margin-top:16px"><PerformanceChart data={performance} currency={currency} /></div>
+
+  <h2>Holdings</h2>
+  <div class="card table-scroll" style="padding:8px 10px">
+    <table>
+      <thead>
+        <tr><th>Holding</th><th>Weight</th><th class="r">Price</th><th class="r">Day</th><th class="r">Since entry</th><th>Entry</th><th>Research</th></tr>
+      </thead>
+      <tbody>
+        {holdings.map((h) => {
+          const post = h.post && postFor(h.post);
+          return (
+            <tr>
+              <td><span class="ticker">{h.isCash ? h.ticker : h.displayTicker}</span><div class="muted small">{h.name}</div></td>
+              <td style="min-width:140px">
+                <div class="wbar"><span style={`width:${(h.weight / maxW) * 80}%`}></span><b class="num">{h.weight}%</b></div>
+              </td>
+              <td class="r num">{h.isCash ? "—" : fmtPrice(h.price, h.currency)}</td>
+              <td class={`r num ${h.day > 0 ? "up" : h.day < 0 ? "down" : ""}`}>{h.isCash ? "—" : fmtPct(h.day, 2)}</td>
+              <td class={`r num ${h.ret > 0 ? "up" : h.ret < 0 ? "down" : ""}`}>{h.isCash ? "—" : fmtPct(h.ret)}</td>
+              <td class="muted small num" style="white-space:nowrap">{h.isCash ? "—" : h.entryDate}</td>
+              <td>{post ? <a href={`/research/${post.slug}/`}>Thesis →</a> : <span class="muted small">—</span>}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+
+  <div class={watchlist.length ? "two-col" : "one-col"}>
+    <section>
+      <h2>Sector mix</h2>
+      <div class="card">
+        {sectors.map(([name, w]) => (
+          <div class="srow"><span>{name}</span><div class="wbar"><span style={`width:${(w / sectors[0][1]) * 80}%`}></span><b class="num">{w}%</b></div></div>
+        ))}
+      </div>
+    </section>
+    {watchlist.length > 0 && <section>
+      <h2>Watchlist</h2>
+      <div class="card table-scroll" style="padding:8px 10px">
+        <table>
+          <thead><tr><th>Name</th><th class="r">Price</th><th class="r">1Y</th></tr></thead>
+          <tbody>
+            {watchlist.map((w) => (
+              <tr>
+                <td><span class="ticker">{w.displayTicker}</span> <span class="muted small">{w.name}</span><div class="muted small">{w.note}{w.post && postFor(w.post) && <> <a href={`/research/${w.post}/`}>Research →</a></>}</div></td>
+                <td class="r num">{fmtPrice(w.price, w.currency)}</td>
+                <td class={`r num ${w.ret1y > 0 ? "up" : w.ret1y < 0 ? "down" : ""}`}>{fmtPct(w.ret1y)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>}
+  </div>
+
+  <p class="muted small" style="margin-top:32px">
+    Method: the portfolio line is a model portfolio at the target weights above, rebalanced daily. Each holding counts from its entry date, and until then its weight is held as cash. Prices come from Yahoo Finance (adjusted for splits and dividends), and listings in other currencies are converted to {currency} at the daily rate. Not audited. Past performance says nothing reliable about future results.
+  </p>
+</Base>
+
+<style>
+  .wbar { display: flex; align-items: center; gap: 8px; }
+  .wbar span { height: 8px; background: var(--series-1); border-radius: 0 4px 4px 0; min-width: 2px; flex: 0 0 auto; }
+  .wbar b { font-weight: 500; font-size: 0.85rem; }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: 8px 0 16px; overflow-x: auto; }
+  .tabs a { padding: 10px 14px; color: var(--text-2); font-weight: 500; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+  .tabs a:hover { text-decoration: none; color: var(--text); }
+  .tabs a[aria-current="page"] { color: var(--text); border-bottom-color: var(--accent); }
+  .one-col { max-width: 520px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1.4fr; gap: 24px; }
+  @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+  .srow { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 12px; padding: 6px 0; font-size: 0.9rem; }
+  .srow .wbar { width: 100%; }
+</style>

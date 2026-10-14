@@ -1,0 +1,16 @@
+{
+  "name": "investing-site",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "prices": "node scripts/fetch-prices.mjs",
+    "dev": "astro dev",
+    "build": "node scripts/fetch-prices.mjs && astro build",
+    "build:offline": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^7.3.8"
+  }
+}

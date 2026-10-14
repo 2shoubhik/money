@@ -1,0 +1,186 @@
+---
+// Growth of each series, rebased to 0% at the start of the selected range.
+// Rendered client-side so the range buttons and hover readout work.
+const { data, currency = "USD" } = Astro.props;
+---
+<section class="card perf" aria-labelledby="perf-title">
+  <div class="perf-head">
+    <div>
+      <h2 id="perf-title">Performance vs. benchmarks</h2>
+      <p class="muted small">Total return in {currency}, rebased to the start of the range.</p>
+    </div>
+    <div class="ranges" role="group" aria-label="Time range">
+      {["1M", "3M", "YTD", "1Y", "ALL"].map((r) => <button type="button" data-range={r} aria-pressed={r === "ALL" ? "true" : "false"}>{r === "ALL" ? "All" : r}</button>)}
+    </div>
+  </div>
+  <div class="legend" aria-hidden="true">
+    {data.series.map((s, i) => <span><i style={`background:var(--series-${i + 1})`}></i>{s.name}</span>)}
+  </div>
+  <div class="plot">
+    <svg role="img" aria-label="Line chart of portfolio and benchmark returns"></svg>
+    <div class="tip" hidden></div>
+  </div>
+  <details class="table-view">
+    <summary>Show as table</summary>
+    <div class="table-scroll"><table><thead></thead><tbody></tbody></table></div>
+  </details>
+  <script type="application/json" class="perf-data" set:html={JSON.stringify(data)} />
+</section>
+
+<style>
+  .perf h2 { margin: 0; }
+  .perf-head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+  .perf-head p { margin: 4px 0 0; }
+  .ranges { display: flex; background: var(--surface-2); border-radius: 8px; padding: 3px; }
+  .ranges button { font: 500 0.82rem var(--sans); border: 0; background: none; color: var(--text-2); padding: 5px 11px; border-radius: 6px; cursor: pointer; }
+  .ranges button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 16px 0 4px; font-size: 0.82rem; color: var(--text-2); }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .legend i { width: 14px; height: 2px; border-radius: 1px; display: inline-block; }
+  .plot { position: relative; }
+  .plot svg { width: 100%; height: 320px; display: block; overflow: visible; touch-action: pan-y; }
+  .tip { position: absolute; top: 0; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 0.8rem; box-shadow: 0 4px 16px rgb(0 0 0 / 0.12); min-width: 170px; }
+  .table-view { margin-top: 12px; font-size: 0.85rem; }
+  .table-view summary { cursor: pointer; color: var(--text-2); }
+  .table-view .table-scroll { max-height: 280px; overflow-y: auto; margin-top: 8px; }
+</style>
+
+<script>
+  const NS = "http://www.w3.org/2000/svg";
+  for (const root of document.querySelectorAll<HTMLElement>(".perf")) {
+    const data = JSON.parse(root.querySelector(".perf-data")!.textContent!);
+    const svg = root.querySelector("svg")!;
+    const tip = root.querySelector<HTMLElement>(".tip")!;
+    const dates: string[] = data.dates;
+    let range = "ALL";
+
+    const startIndex = (r: string) => {
+      const last = new Date(dates.at(-1)!);
+      const d = new Date(last);
+      if (r === "1M") d.setMonth(d.getMonth() - 1);
+      else if (r === "3M") d.setMonth(d.getMonth() - 3);
+      else if (r === "1Y") d.setFullYear(d.getFullYear() - 1);
+      else if (r === "YTD") d.setMonth(0, 0);
+      else return 0;
+      const iso = d.toISOString().slice(0, 10);
+      const i = dates.findIndex((x) => x > iso);
+      return Math.max(0, i === -1 ? 0 : i - (r === "YTD" ? 0 : 0));
+    };
+    const fmt = (v: number) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(1)}%`;
+    const fmtDate = (s: string, long = false) =>
+      new Date(s + "T12:00:00").toLocaleDateString("en-US", long ? { month: "short", day: "numeric", year: "numeric" } : { month: "short", year: "2-digit" });
+    const el = (tag: string, attrs: Record<string, any> = {}, parent: Element = svg) => {
+      const n = document.createElementNS(NS, tag);
+      for (const k in attrs) n.setAttribute(k, attrs[k]);
+      parent.appendChild(n);
+      return n;
+    };
+
+    function draw() {
+      const s0 = startIndex(range);
+      const ds = dates.slice(s0);
+      const series = data.series.map((s: any, i: number) => {
+        const base = s.values[s0];
+        return { name: s.name, color: `var(--series-${i + 1})`, v: s.values.slice(s0).map((x: number) => (x / base - 1) * 100) };
+      });
+      const W = svg.clientWidth || 800, H = 320;
+      const m = { t: 12, r: W < 560 ? 12 : 112, b: 28, l: 44 };
+      const all = series.flatMap((s: any) => s.v);
+      let lo = Math.min(0, ...all), hi = Math.max(0, ...all);
+      const pad = (hi - lo) * 0.08 || 1; lo -= pad; hi += pad;
+      const step = niceStep((hi - lo) / 6);
+      lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step;
+      const x = (i: number) => m.l + (i / Math.max(1, ds.length - 1)) * (W - m.l - m.r);
+      const y = (v: number) => m.t + ((hi - v) / (hi - lo)) * (H - m.t - m.b);
+
+      svg.replaceChildren();
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      // grid + y labels
+      for (let v = lo; v <= hi + 1e-9; v += step) {
+        el("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: Math.abs(v) < 1e-9 ? "var(--text-3)" : "var(--grid)", "stroke-width": 1 });
+        const t = el("text", { x: m.l - 8, y: y(v) + 4, "text-anchor": "end", "font-size": 11, fill: "var(--text-3)" });
+        t.textContent = `${Math.round(v)}%`;
+      }
+      // x labels
+      const ticks = Math.min(W < 560 ? 4 : 6, ds.length);
+      for (let k = 0; k < ticks; k++) {
+        const i = Math.round((k / (ticks - 1 || 1)) * (ds.length - 1));
+        const t = el("text", { x: x(i), y: H - 6, "text-anchor": k === 0 ? "start" : k === ticks - 1 ? "end" : "middle", "font-size": 11, fill: "var(--text-3)" });
+        t.textContent = fmtDate(ds[i], ds.length < 70);
+      }
+      // lines (portfolio drawn last so it sits on top)
+      [...series].reverse().forEach((s: any) => {
+        const d = s.v.map((v: number, i: number) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
+        el("path", { d, fill: "none", stroke: s.color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" });
+      });
+      // direct end labels (desktop), nudged apart to avoid collisions
+      if (m.r > 40) {
+        const labels = series.map((s: any) => ({ s, y: y(s.v.at(-1)) })).sort((a: any, b: any) => a.y - b.y);
+        for (let k = 1; k < labels.length; k++) if (labels[k].y - labels[k - 1].y < 28) labels[k].y = labels[k - 1].y + 28;
+        labels.forEach(({ s, y: ly }: any) => {
+          el("circle", { cx: x(ds.length - 1), cy: y(s.v.at(-1)), r: 4, fill: s.color, stroke: "var(--surface)", "stroke-width": 2 });
+          const t = el("text", { x: W - m.r + 10, y: ly + 1, "font-size": 12, "font-weight": 600, fill: "var(--text)" });
+          t.textContent = fmt(s.v.at(-1));
+          const n = el("text", { x: W - m.r + 10, y: ly + 14, "font-size": 10.5, fill: "var(--text-3)" });
+          n.textContent = s.name.replace("S&P/TSX Composite", "TSX");
+        });
+      }
+      // crosshair layer
+      const hair = el("line", { y1: m.t, y2: H - m.b, stroke: "var(--text-3)", "stroke-width": 1, visibility: "hidden" });
+      const dots = series.map((s: any) => el("circle", { r: 4, fill: s.color, stroke: "var(--surface)", "stroke-width": 2, visibility: "hidden" }));
+      const hit = el("rect", { x: m.l, y: 0, width: W - m.l - m.r, height: H, fill: "transparent" });
+      const move = (ev: PointerEvent) => {
+        const r = svg.getBoundingClientRect();
+        const px = ((ev.clientX - r.left) / r.width) * W;
+        const i = Math.max(0, Math.min(ds.length - 1, Math.round(((px - m.l) / (W - m.l - m.r)) * (ds.length - 1))));
+        hair.setAttribute("x1", String(x(i))); hair.setAttribute("x2", String(x(i)));
+        hair.setAttribute("visibility", "visible");
+        dots.forEach((d: Element, k: number) => { d.setAttribute("cx", String(x(i))); d.setAttribute("cy", String(y(series[k].v[i]))); d.setAttribute("visibility", "visible"); });
+        tip.replaceChildren();
+        const h = document.createElement("div"); h.className = "muted"; h.style.marginBottom = "4px"; h.textContent = fmtDate(ds[i], true); tip.appendChild(h);
+        series.forEach((s: any) => {
+          const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:8px;";
+          const key = document.createElement("i"); key.style.cssText = `width:12px;height:2px;background:${s.color};display:inline-block`;
+          const val = document.createElement("strong"); val.className = "num"; val.textContent = fmt(s.v[i]);
+          const name = document.createElement("span"); name.className = "muted"; name.textContent = s.name;
+          row.append(key, val, name); tip.appendChild(row);
+        });
+        tip.hidden = false;
+        const left = (x(i) / W) * r.width;
+        tip.style.left = `${left > r.width / 2 ? left - tip.offsetWidth - 12 : left + 12}px`;
+      };
+      hit.addEventListener("pointermove", move as any);
+      hit.addEventListener("pointerdown", move as any);
+      hit.addEventListener("pointerleave", () => { tip.hidden = true; hair.setAttribute("visibility", "hidden"); dots.forEach((d: Element) => d.setAttribute("visibility", "hidden")); });
+
+      // table view (weekly rows to keep it readable)
+      const thead = root.querySelector("thead")!, tbody = root.querySelector("tbody")!;
+      thead.replaceChildren(); tbody.replaceChildren();
+      const hr = document.createElement("tr");
+      ["Date", ...series.map((s: any) => s.name)].forEach((t, k) => { const th = document.createElement("th"); th.textContent = t; if (k) th.className = "r"; hr.appendChild(th); });
+      thead.appendChild(hr);
+      for (let i = ds.length - 1; i >= 0; i -= 5) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td"); td.textContent = fmtDate(ds[i], true); tr.appendChild(td);
+        series.forEach((s: any) => { const c = document.createElement("td"); c.className = "r num"; c.textContent = fmt(s.v[i]); tr.appendChild(c); });
+        tbody.appendChild(tr);
+      }
+    }
+
+    function niceStep(raw: number) {
+      const p = Math.pow(10, Math.floor(Math.log10(raw)));
+      const f = raw / p;
+      return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p;
+    }
+
+    root.querySelectorAll<HTMLButtonElement>(".ranges button").forEach((b) =>
+      b.addEventListener("click", () => {
+        range = b.dataset.range!;
+        root.querySelectorAll(".ranges button").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+        draw();
+      })
+    );
+    new ResizeObserver(() => draw()).observe(svg);
+    draw();
+  }
+</script>

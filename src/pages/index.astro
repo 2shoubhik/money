@@ -1,0 +1,48 @@
+---
+import Base from "../layouts/Base.astro";
+import PostList from "../components/PostList.astro";
+import { posts } from "../lib/posts.js";
+import { portfolios, fmtPct } from "../lib/portfolio.js";
+import { site } from "../config.js";
+---
+<Base>
+  <section class="hero">
+    <h1>{site.tagline}</h1>
+    <p class="muted lead">I'm {site.author}. I invest in US, Canadian and Indian equities and write up every position in public: the thesis, the numbers, and what would make me sell.</p>
+    <div class="cta">
+      <a class="btn primary" href="/portfolio/us/">See the portfolios</a>
+      <a class="btn" href={`https://x.com/${site.xHandle}`}>Follow on X</a>
+    </div>
+  </section>
+
+  <div class="tiles">
+    {portfolios.map(({ id, name, summary, holdings, currency }) => {
+      const alpha = summary.sinceInception - summary.benchmark;
+      const top = holdings.filter((h) => !h.isCash).slice(0, 4).map((h) => h.displayTicker);
+      return (
+        <a class="card tile link" href={`/portfolio/${id}/`}>
+          <div class="label">{name} portfolio <span class="muted">· {currency}</span></div>
+          <div class="value">{fmtPct(summary.sinceInception)}</div>
+          <div class="sub">vs. {summary.benchmarkName} {fmtPct(summary.benchmark)} (<span class={alpha >= 0 ? "up" : "down"}>{fmtPct(alpha)}</span>)</div>
+          <div class="sub" style="margin-top:6px">{top.join(" · ")}{summary.positions > 4 ? ` +${summary.positions - 4}` : ""}</div>
+        </a>
+      );
+    })}
+  </div>
+
+  <h2>Latest research</h2>
+  <PostList posts={posts.slice(0, 5)} />
+  {posts.length > 5 && <p><a href="/research/">All research →</a></p>}
+</Base>
+
+<style>
+  .hero { padding: 24px 0 40px; max-width: 760px; }
+  .hero h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(2rem, 5vw, 3rem); }
+  .lead { font-size: 1.1rem; }
+  .cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+  .btn { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--border); color: var(--text); font-weight: 500; background: var(--surface); }
+  .btn:hover { text-decoration: none; border-color: var(--text-3); }
+  .btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  a.tile.link { color: inherit; }
+  a.tile.link:hover { text-decoration: none; border-color: var(--text-3); }
+</style>

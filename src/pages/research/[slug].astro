@@ -1,0 +1,30 @@
+---
+import Base from "../../layouts/Base.astro";
+import { posts, fmtDate } from "../../lib/posts.js";
+import { site } from "../../config.js";
+
+export function getStaticPaths() {
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+const { post } = Astro.props;
+const { Content } = post;
+const shareText = encodeURIComponent(`${post.title}${post.tickers?.length ? " " + post.tickers.map((t) => "$" + t).join(" ") : ""}`);
+const shareUrl = encodeURIComponent(new URL(`/research/${post.slug}/`, site.url).href);
+---
+<Base title={post.title} description={post.summary}>
+  <article>
+    <div class="meta" style="margin-bottom:12px">
+      <a href="/research/">← Research</a>
+      <span>·</span><span>{fmtDate(post.date)}</span>
+      {post.updated && <span>(updated {fmtDate(post.updated)})</span>}
+      {(post.tickers ?? []).map((t) => <span class="chip">${t}</span>)}
+    </div>
+    <h1 style="max-width:760px">{post.title}</h1>
+    {post.summary && <p class="muted" style="font-size:1.1rem;max-width:700px;margin-top:0">{post.summary}</p>}
+    <div class="disclosure">
+      <strong>Disclosure:</strong> {post.position === "Long" ? `I own ${post.tickers?.join(", ") ?? "this stock"} at the time of writing.` : post.position === "Watching" ? `I do not currently own ${post.tickers?.join(", ") ?? "this stock"}, but may buy it.` : "I hold no position in the securities mentioned."} This is my personal research, not a recommendation to buy or sell.
+    </div>
+    <div class="prose"><Content /></div>
+    <p style="margin-top:40px"><a href={`https://x.com/intent/post?text=${shareText}&url=${shareUrl}&via=${site.xHandle}`} target="_blank" rel="noopener">Share on X →</a></p>
+  </article>
+</Base>
