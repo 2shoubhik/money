@@ -1,28 +1,25 @@
 ---
-title: Why I'm publishing my portfolio
+title: Why I'm putting my portfolio online
 date: 2026-10-14
-summary: What this site is, how I pick stocks, and the rules I follow when writing about them.
+summary: What this site is, what I hold, and the few rules I follow when I write about a stock.
 position: None
 tickers: []
 ---
 
-Most investing content online is a hot take with no follow-up. I'd rather keep a **public, timestamped record**: what I own, why I bought it, and what would make me sell. That way you can check my reasoning against what actually happened, and so can I.
+A lot of investing content online is someone saying a stock will go up, and then never mentioning it again. I wanted to do the opposite: write down what I own and why, put a date on it, and leave it up so anyone can check later whether I was right. That includes me.
 
-## What you'll find here
+So this site has two parts.
 
-- **The [portfolio](/portfolio/)**: every position and its weight, tracked against the S&P 500 and TSX. I show percentages, never dollar amounts.
-- **Deep dives** on each holding: the business, why it wins, the financials, valuation, and the risks.
-- **Thesis updates** after earnings or major news, including when I'm wrong.
-- **The watchlist**: companies I'm studying but haven't bought yet.
+The [portfolio](/portfolio/) shows everything I hold, split into a US & Canada portfolio and an India portfolio. Each one is compared with the index it should beat: the S&P 500 for the first, the Nifty Smallcap 250 for the second. I show weights and percentage returns, not amounts.
+
+The [research](/research/) section is where I write up each company: what it does, why I bought it or why I'm waiting, what I think it's worth, and what would make me sell. When earnings come out or something changes, I'll write an update, including when I got it wrong.
 
 ## How I invest
 
-*(Edit this to describe your own approach, e.g. time horizon, concentration, what you look for in a business, and what you avoid.)*
+*(Write a few lines here in your own words: how long you hold, how concentrated you are, what you look for, and what you stay away from.)*
 
-## Ground rules
+## A few rules
 
-1. Every post says whether I own the stock.
-2. I log trades on the portfolio page when I make them, not afterwards.
-3. Nothing here is a recommendation. It's my reasoning, made public so others can poke holes in it.
+Every post says whether I own the stock. When I buy or sell, I update the portfolio page at the time, not afterwards. Nothing here is advice. It's my own reasoning, written down so other people can tell me where it's wrong.
 
-You can follow along on X for shorter takes and discussion.
+Shorter thoughts and discussion will be on X.

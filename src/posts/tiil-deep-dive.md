@@ -1,75 +1,65 @@
 ---
-title: "Technocraft Industries (TIIL): drum closures, scaffolding, and a US capex tailwind"
+title: "Technocraft Industries: drum caps, scaffolding and a lot of US construction"
 date: 2026-10-14
-summary: A quiet Mumbai manufacturer with a global niche in drum closures and a scaffolding business riding US data center and chip-fab construction. Why it's one of my largest India positions.
+summary: Technocraft makes things nobody thinks about, like drum closures and scaffolding, and sells most of them abroad. Why it's my largest position in India.
 position: Long
 tickers: [TIIL]
 ---
 
-<!-- Draft written with Claude from company results and the Q1 FY27 call. Check the numbers against the BSE/NSE filing, rewrite the "My take" lines in your own voice, and keep this framed as personal analysis, not a recommendation (SEBI). -->
+<!-- Draft. Check the figures against the BSE/NSE filing before posting, change anything that doesn't sound like you, and keep it as personal analysis, not a recommendation. -->
 
-## The thesis in three sentences
+Technocraft is my biggest holding in India, about 18% of the portfolio. It's a Mumbai company that most investors have never heard of, and what it makes doesn't sound exciting. I think that's part of why it's still reasonably priced.
 
-Technocraft is one of the world's leading makers of steel drum closures, a near-100% export business that earns 30%+ margins. Its second engine, scaffolding and aluminium formwork, is running at ~95% capacity on demand from US data center, semiconductor and energy projects. At roughly 17–18x trailing earnings, I think the market is still valuing it like a cyclical steel fabricator rather than a niche exporter with two good businesses.
+## What it makes
 
-## The business
+The core business is **drum closures**: the caps and flanges on the big steel drums used to ship chemicals, oils and paints. Technocraft is one of the largest makers in the world, and almost all of this revenue comes from exports. It's a small market, so large competitors don't bother with it, and customers rarely switch suppliers once a closure works on their production line.
 
-Technocraft has four main segments:
+The second business is **scaffolding and formwork**. This is now the largest segment, at about ₹405 crore of revenue last quarter. Steel scaffolding goes mostly to the US. Aluminium formwork (sold under the name Mach 1) is used on construction sites in India, and Technocraft makes its own aluminium extrusions for it.
 
-- **Drum closures.** These are the caps and flanges on industrial steel drums. Nearly all of this revenue is exported to global drum makers. It's a small, unglamorous niche where scale, quality and long customer relationships keep competitors out.
-- **Scaffolding and formwork.** Steel scaffolding (mostly exported, with the US the key market) and *Mach 1* aluminium formwork for Indian construction, backed by an in-house aluminium extrusion plant. This is the largest segment, at about ₹405 crore of Q1 FY27 revenue.
-- **Engineering services.** Design and engineering work, mainly for US clients. Management targets ~15% margins.
-- **Textiles.** Yarn (profitable, ~13% EBITDA) and garments (loss-making, being restructured). The fabric unit has been shut down and its equipment sold for ₹25–30 crore.
+Then there are smaller pieces. An engineering services arm does design work, mostly for US clients. There's a textiles division too: the yarn business makes money, but the garments business doesn't. The fabric unit was shut down this year and its equipment sold for ₹25–30 crore. A new defence business has picked up its first orders, about ₹20 crore for coolers and ₹10 crore for missile canisters.
 
-There's also a new **defence** vertical, with early orders of about ₹20 crore for coolers and ₹10 crore for missile canisters.
+## Why I own it
 
-## Why it wins
+Two reasons.
 
-- **A niche it leads globally.** Drum closures are a small market that big players ignore, and long customer relationships make it sticky.
-- **Export pricing power plus a weak rupee.** Because nearly all drum closure revenue is in foreign currency, rupee depreciation flows straight to margins. Q1 FY27 drum closure EBIT margin hit a record **~43%**.
-- **Riding US construction capex.** Management links strong US scaffolding demand to AI chip fabs, semiconductor plants and energy projects. Capacity is ~95% utilised and can be expanded within about three months.
-- **Owner-operators.** Promoters own ~74.75% of the company.
+First, drum closures are a very good business that happens to be inside a company most people see as a steel fabricator. Margins in this segment are well above 30%. Because nearly all of it is sold in foreign currency, a weaker rupee goes straight to profit. Last quarter the segment's EBIT margin hit a record 43%. Management was quick to say that isn't sustainable, but even their "normal" is above 30%.
 
-## Financials
+Second, US construction. Management says scaffolding demand is strong because of chip fabs, semiconductor plants and energy projects being built in the US. The scaffolding plants are running at about 95% of capacity. They can add more capacity in about three months if orders keep coming, and capex this year is only maintenance.
+
+I also like that the promoters own about 75% of the company. They aren't going anywhere.
+
+## The numbers
 
 | | FY25 | FY26 | Q1 FY26 | Q1 FY27 |
 |---|---|---|---|---|
 | Revenue | ~₹2,596 cr | ₹2,759 cr | ₹633 cr | ₹805 cr |
-| Growth | | +6.3% | | **+27%** |
 | Net profit | ₹263 cr | ₹293 cr | ₹82 cr | ~₹135–138 cr |
-| EBITDA margin | | | 17.7% | ~21.9% |
 
-FY26 was a slow year, with revenue up 6% and profit up 11.5%. Q1 FY27 was a sharp step up, with revenue up 27% and profit up ~67–70%. Management says no major capex is planned for FY27, beyond maintenance. Phase 2 of the CSN plant is being considered for next year.
+FY26 was slow: revenue grew 6% and profit 11.5%. Q1 FY27 was a big jump, with revenue up 27% and profit up roughly two-thirds. EBITDA margin was about 22%, against 18% a year earlier.
+
+One quarter isn't a trend, and some of it was the rupee. But the scaffolding demand looks real, and the plants are full.
 
 ## Valuation
 
-These are my own calculations:
+By my own rough maths, the market cap is about ₹6,000 crore (₹2,670 a share × 2.27 crore shares). Trailing profit is around ₹348 crore (FY26, minus last year's Q1, plus this year's Q1). That's about 17–18 times earnings.
 
-- **Market cap:** ~₹6,000 crore (₹2,670 × ~2.27 crore shares)
-- **Trailing profit:** ~₹348 crore (FY26 minus Q1 FY26 plus Q1 FY27)
-- **Trailing P/E:** ~17–18x
+The stock is about 23% below its August high, and it fell around 18% in the last month. I couldn't find any news to explain that. With only a quarter of the shares available to the public, it doesn't take much selling to move the price.
 
-The stock is ~23% below its August high and fell ~18% in the past month. I couldn't find a company-specific news trigger for the drop. With only ~25% of shares in public hands, moves in either direction can be sharp.
+## What could go wrong
 
-## Risks and what would change my mind
+- **Margins come down.** The 43% drum closure margin won't last, and management has said so. If the rupee strengthens, it falls further.
+- **US tariffs and China.** The US charges about 50% duty on scaffolding imports. Chinese competitors are still undercutting on price despite paying 25% more in tariffs than Technocraft does.
+- **Aluminium prices** hurt the formwork business when they rise, although making its own extrusions helps.
+- **Textiles** are still a drag until garments break even.
+- **The Middle East.** Sales there are small, around 2–3% of revenue, but they've dropped because of the conflict and shipping problems.
+- **Group structure.** A related EPC business, Technocraft Ventures, listed in August. I'll be watching to make sure money doesn't move from the listed company into side ventures.
 
-1. **Peak margins.** Management itself says 43% drum closure margins are "not the new normal" and points to 30%+ as sustainable. If the rupee strengthens, margins fall.
-2. **US tariffs and Chinese competition.** US tariffs on scaffolding are high, at about 50%. Chinese scaffolding makers are undercutting on price despite a 25% tariff disadvantage.
-3. **Aluminium prices** affect formwork profitability, although the in-house extrusion plant helps.
-4. **Textiles drag.** Garments are still loss-making.
-5. **Geopolitics.** Middle East scaffolding sales (~2–3%) are down because of the conflict and shipping disruption.
-6. **Low float and group complexity.** Promoters hold ~75% and the stock is thinly traded. A related EPC business, Technocraft Ventures, listed in August 2026, so it's worth watching how capital moves within the group.
+## When I'd sell
 
-**What would make me sell or trim:** drum closure margins settling well below 30%, US scaffolding volumes falling, or capital going into unrelated ventures rather than the core businesses.
+I'd sell if drum closure margins settle well below 30%, if US scaffolding orders start falling, or if the company starts putting capital into businesses that have nothing to do with what it's good at.
 
-## Position
-
-I own TIIL. It's ~18% of my [India portfolio](/portfolio/india/), my largest position there.
-
-## My take
-
-*(Rewrite this in your own voice.)* This is a boring business in the best sense: two segments with real niches, owners with skin in the game, and a structural tailwind from US industrial capex that I don't think the valuation fully reflects. The risk is that Q1 FY27 was a peak quarter flattered by the rupee. I'll judge it on whether margins hold above 30% over the next few quarters.
+Until then I'm happy holding. The next two or three quarters will show whether Q1 was a peak helped by the rupee or the start of a better run.
 
 ---
 
-**Sources:** [Q1 FY27 earnings call highlights (GuruFocus via Yahoo Finance)](https://finance.yahoo.com/markets/stocks/articles/technocraft-industries-india-ltd-bom-150021815.html) · [Q1 FY27 results (Sahi)](https://www.sahi.com/news/technocraft-industries-reports-q1-net-profit-of-134-crore-revenue-rises-to-800-crore-3580-PE1_COR) · [Q1 FY27 results (Multibagg)](https://www.multibagg.ai/market-pulse/articles/technocraft-industries-q1fy27-results-cmsssrebm00lz0zpjtr30etlf) · [FY26 results (ScanX)](https://scanx.trade/stock-market-news/companies/technocraft-board-to-meet-may-28-to-consider-interim-dividend/40833642) · [Screener.in](https://www.screener.in/company/TIIL) · [Business Standard quote](https://www.business-standard.com/markets/technocraft-industries-india-ltd-share-price-26912.html)
+Sources: [Q1 FY27 earnings call highlights](https://finance.yahoo.com/markets/stocks/articles/technocraft-industries-india-ltd-bom-150021815.html) · [Q1 FY27 results (Sahi)](https://www.sahi.com/news/technocraft-industries-reports-q1-net-profit-of-134-crore-revenue-rises-to-800-crore-3580-PE1_COR) · [Q1 FY27 results (Multibagg)](https://www.multibagg.ai/market-pulse/articles/technocraft-industries-q1fy27-results-cmsssrebm00lz0zpjtr30etlf) · [FY26 results (ScanX)](https://scanx.trade/stock-market-news/companies/technocraft-board-to-meet-may-28-to-consider-interim-dividend/40833642) · [Screener.in](https://www.screener.in/company/TIIL) · [Business Standard](https://www.business-standard.com/markets/technocraft-industries-india-ltd-share-price-26912.html)
