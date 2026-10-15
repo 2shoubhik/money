@@ -1,0 +1,247 @@
+---
+// "Sentiment at a glance": a mood map (chatter lean vs. attention) and a
+// signal board (one row per name: attention, chatter lean, insider money).
+// Rendered at build time from sentiment.json and insiders.json; no JS needed.
+import sentiment from "../data/sentiment.json";
+import insiders from "../data/insiders.json";
+const { items } = Astro.props; // [{ ticker, displayTicker, name, kind }]
+
+const MIN_OPINIONATED = 5;
+const rows = items
+  .map((it) => {
+    const s = sentiment.tickers?.[it.ticker] ?? {};
+    const ins = insiders.tickers?.[it.ticker];
+    const c = s.chatter;
+    const opinionated = c ? (c.bullish ?? 0) + (c.bearish ?? 0) : 0;
+    return {
+      ...it,
+      attention: s.attention?.ratio ?? null,
+      attentionLabel: s.attention?.label,
+      lean: c && opinionated >= MIN_OPINIONATED ? c.score : null,
+      opinionated,
+      chatterMethod: c?.method,
+      insider: ins?.status === "ok" && !(/\.TO$/.test(it.ticker) && ins.filings === 0) ? ins : null,
+    };
+  })
+  .filter((r) => r.attention != null || r.lean != null || r.insider);
+
+// ---- signal board scales ----
+const pct = (v) => `${Math.max(0, Math.min(100, v)).toFixed(1)}%`;
+const attnWidth = (r) => pct((Math.min(r, 2) / 2) * 100); // 1x usual sits on the centre line
+// Insider dollars span $100K to $1B, so bars use a log scale out from the centre.
+const MAX_LOG = Math.log10(1e9 / 1e5);
+const moneyHalf = (v) => (v > 1e5 ? (Math.min(Math.log10(v / 1e5), MAX_LOG) / MAX_LOG) * 50 : v > 0 ? 1 : 0);
+const money = (v) => (v >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : v >= 1e6 ? `$${(v / 1e6).toFixed(1)}M` : `$${Math.round(v / 1e3)}K`);
+const signed = (v) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(2)}`;
+
+// ---- mood map geometry ----
+// Two layouts: a wide one, and a narrow one for phones so the text doesn't
+// shrink below a readable size when the SVG scales down.
+const plotted = rows.filter((r) => r.lean != null && r.attention != null);
+function mapLayout(W, H, L, B, size) {
+  const R = 16, T = 16;
+  const pw = W - L - R, ph = H - T - B;
+  const x = (lean) => L + ((lean + 1) / 2) * pw;
+  // Attention on a log scale: 0.5x at the bottom, 1x in the middle, 2x+ at the top.
+  const y = (ratio) => T + ph / 2 - (Math.max(-1, Math.min(1, Math.log2(ratio))) * ph) / 2;
+  const dots = plotted.map((r) => ({ ...r, cx: x(r.lean), cy: y(r.attention), rad: Math.max(5, Math.min(size === "wide" ? 16 : 11, Math.sqrt(r.opinionated) * (size === "wide" ? 2.2 : 1.6))) }));
+  // Nudge labels that would overlap a neighbour's.
+  const placed = [];
+  for (const d of [...dots].sort((a, b) => a.cy - b.cy)) {
+    d.ly = d.cy + 4;
+    for (const p of placed) if (Math.abs(p.cx - d.cx) < 60 && Math.abs(p.ly - d.ly) < 14) d.ly = p.ly + 14;
+    d.left = d.cx > W - R - 70; // label on the left near the right edge
+    placed.push(d);
+  }
+  return { size, W, H, L, T, pw, ph, x, y, dots };
+}
+const layouts = [mapLayout(680, 340, 56, 44, "wide"), mapLayout(360, 320, 40, 44, "narrow")];
+const tone = (lean) => (lean > 0.25 ? "bull" : lean < -0.25 ? "bear" : "flat");
+const leanWord = (lean) => (lean > 0.25 ? "bullish" : lean < -0.25 ? "bearish" : "mixed");
+const usedWordlist = rows.some((r) => r.lean != null && r.chatterMethod === "wordlist");
+---
+{rows.length > 0 && (
+  <section class="glance" aria-labelledby="glance-title">
+    <h2 id="glance-title">Sentiment at a glance</h2>
+    <p class="muted small intro">
+      Where the crowd and the insiders stand on each name this week. Attention is Wikipedia traffic against its usual level, chatter lean is the balance of bullish and bearish Bluesky posts{usedWordlist ? " (a quick word-match read on some names; see the details below)" : ""}, and insider money is open-market buying and selling from SEC filings. It's a mood reading, not a forecast.
+    </p>
+
+    {plotted.length >= 2 && (
+      <figure class="card map">
+        {layouts.map(({ size, W, H, L, T, pw, ph, x, y, dots }) => (
+          <svg viewBox={`0 0 ${W} ${H}`} class={size} role="img" aria-labelledby={`map-title-${size} map-desc-${size}`}>
+            <title id={`map-title-${size}`}>Mood map</title>
+            <desc id={`map-desc-${size}`}>{dots.map((d) => `${d.displayTicker}: chatter ${leanWord(d.lean)} (${signed(d.lean)}), attention ${d.attention}× usual`).join("; ")}</desc>
+            <rect x={L} y={T} width={pw} height={ph} class="plot" rx="4" />
+            <line x1={x(0)} x2={x(0)} y1={T} y2={T + ph} class="axis" />
+            <line x1={L} x2={L + pw} y1={y(1)} y2={y(1)} class="axis dashed" />
+            {/* Quadrant labels hug the centre line: names cluster in the outer corners. */}
+            <text x={x(0) - 8} y={T + 18} class="q" text-anchor="end">{size === "wide" ? "Hot and bearish" : "Hot, bearish"}</text>
+            <text x={x(0) + 8} y={T + 18} class="q">{size === "wide" ? "Hot and bullish" : "Hot, bullish"}</text>
+            <text x={x(0) - 8} y={T + ph - 8} class="q" text-anchor="end">{size === "wide" ? "Quiet and bearish" : "Quiet, bearish"}</text>
+            <text x={x(0) + 8} y={T + ph - 8} class="q">{size === "wide" ? "Quiet and bullish" : "Quiet, bullish"}</text>
+            <text x={L - 6} y={y(2) + 4} class="tick" text-anchor="end">2×</text>
+            <text x={L - 6} y={y(1) + 4} class="tick" text-anchor="end">1×</text>
+            <text x={L - 6} y={y(0.5) + 4} class="tick" text-anchor="end">0.5×</text>
+            <text x={x(-1)} y={H - 22} class="tick">Bearish</text>
+            <text x={x(1)} y={H - 22} class="tick" text-anchor="end">Bullish</text>
+            <text x={x(0)} y={H - 6} class="axis-title" text-anchor="middle">Chatter lean</text>
+            <text x="12" y={T + ph / 2} class="axis-title" text-anchor="middle" transform={`rotate(-90 12 ${T + ph / 2})`}>Attention vs usual</text>
+            {dots.map((d) => (
+              <g class={`dot ${tone(d.lean)}`} tabindex="0">
+                <title>{`${d.displayTicker}: chatter ${leanWord(d.lean)} (${signed(d.lean)}, ${d.opinionated} opinionated posts), attention ${d.attention}× usual`}</title>
+                <circle cx={d.cx} cy={d.cy} r={d.rad + 8} class="hit" />
+                <circle cx={d.cx} cy={d.cy} r={d.rad} class="mark" />
+                <text x={d.left ? d.cx - d.rad - 5 : d.cx + d.rad + 5} y={d.ly} text-anchor={d.left ? "end" : "start"} class="dl">{d.displayTicker}</text>
+              </g>
+            ))}
+          </svg>
+        ))}
+        <figcaption class="muted small">Bigger dots mean more opinionated posts. Hover or tap a dot for its numbers.</figcaption>
+      </figure>
+    )}
+
+    <div class="card board">
+      <div class="legend small">
+        <span><i class="sw bull"></i>Bullish or bought</span>
+        <span><i class="sw bear"></i>Bearish or sold</span>
+        <span><i class="sw planned"></i>Pre-planned sales (10b5-1)</span>
+        <span><i class="sw attn"></i>Attention</span>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Attention vs usual</th>
+              <th scope="col"><div class="split"><span>Bearish</span><b>Chatter lean</b><span>Bullish</span></div></th>
+              <th scope="col"><div class="split"><span>Sold</span><b>Insider money</b><span>Bought</span></div></th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => {
+              const ins = r.insider;
+              const sold = ins?.sells.value ?? 0;
+              const bought = ins?.buys.value ?? 0;
+              const plannedShare = sold ? ins.sells.planned / sold : 0;
+              return (
+                <tr>
+                  <th scope="row">
+                    <span class="ticker">{r.displayTicker}</span>
+                    {r.kind === "watchlist" && <span class="chip">Watchlist</span>}
+                  </th>
+                  <td data-label="Attention vs usual">
+                    {r.attention != null ? (
+                      <>
+                        <div class="track"><span class="fill attn" style={`width:${attnWidth(r.attention)}`}></span><span class="mid"></span></div>
+                        <div class="cap">{r.attention.toFixed(2)}× · {r.attentionLabel?.toLowerCase()}</div>
+                      </>
+                    ) : <div class="cap">no Wikipedia page</div>}
+                  </td>
+                  <td data-label="Chatter lean (bearish ← → bullish)">
+                    {r.lean != null ? (
+                      <>
+                        <div class="track">
+                          <span class={`fill ${tone(r.lean) === "bear" || r.lean < 0 ? "bear" : "bull"}`} style={r.lean < 0 ? `right:50%;width:${pct(Math.abs(r.lean) * 50)}` : `left:50%;width:${pct(r.lean * 50)}`}></span>
+                          <span class="mid"></span>
+                        </div>
+                        <div class="cap">{signed(r.lean)} · {r.opinionated} opinionated posts</div>
+                      </>
+                    ) : <><div class="track"><span class="mid"></span></div><div class="cap">not enough opinionated posts</div></>}
+                  </td>
+                  <td data-label="Insider money (sold ← → bought)">
+                    {!ins ? (
+                      <div class="cap">{/-USD$/.test(r.ticker) ? "no insiders (crypto)" : /\.(NS|BO)$/.test(r.ticker) ? "not tracked for India yet" : "not reported to the SEC"}</div>
+                    ) : !sold && !bought ? (
+                      <><div class="track"><span class="mid"></span></div><div class="cap">no open-market trades</div></>
+                    ) : (
+                      <>
+                        <div class="track">
+                          {sold > 0 && <span class="fill bear" style={`right:50%;width:${pct(moneyHalf(sold))}`}></span>}
+                          {plannedShare > 0 && <span class="fill planned" style={`right:50%;width:${pct(moneyHalf(sold) * plannedShare)}`}></span>}
+                          {bought > 0 && <span class="fill bull" style={`left:50%;width:${pct(moneyHalf(bought))}`}></span>}
+                          <span class="mid"></span>
+                        </div>
+                        <div class="cap">
+                          {sold > 0 && <>sold {money(sold)}{plannedShare > 0 && ` (${Math.round(plannedShare * 100)}% planned)`}</>}
+                          {sold > 0 && bought > 0 && " · "}
+                          {bought > 0 && <>bought {money(bought)}</>}
+                        </div>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small note">Attention: the centre line is 1× usual; a full bar is 2× or more. Insider bars use a log scale from $100K to $1B, so a long bar means a lot more money than a short one.</p>
+    </div>
+  </section>
+)}
+
+<style>
+  .glance { --bull: var(--series-1); --bear: #e34948; }
+  :global(:root[data-theme="dark"]) .glance { --bear: #e66767; }
+  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .glance { --bear: #e66767; } }
+  .intro { max-width: 760px; margin-top: -4px; }
+  .map { margin: 16px 0 12px; padding: 12px 12px 8px; }
+  .map svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .map figcaption { margin: 4px 4px 0; }
+  .plot { fill: var(--surface-2); }
+  .axis { stroke: var(--text-3); stroke-width: 1; opacity: 0.6; }
+  .dashed { stroke-dasharray: 3 4; }
+  .q { font-size: 12px; fill: var(--text-3); }
+  .tick { font-size: 11px; fill: var(--text-3); }
+  .axis-title { font-size: 12px; fill: var(--text-2); }
+  .dot { cursor: default; outline: none; }
+  .dot .hit { fill: transparent; }
+  .dot .mark { stroke: var(--surface); stroke-width: 2; fill-opacity: 0.9; }
+  .dot.bull .mark { fill: var(--bull); }
+  .dot.bear .mark { fill: var(--bear); }
+  .dot.flat .mark { fill: var(--text-3); }
+  .dot:hover .mark, .dot:focus .mark { stroke: var(--text); }
+  .dl { font-size: 12px; font-weight: 600; fill: var(--text); }
+  .board { padding: 14px 16px 10px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; color: var(--text-2); margin-bottom: 8px; }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  .scroll { overflow-x: auto; }
+  table { min-width: 560px; table-layout: fixed; }
+  th:first-child { width: 120px; }
+  thead th { font-size: 0.75rem; text-align: center; }
+  thead th:first-child, thead th:nth-child(2) { text-align: left; }
+  .split { display: flex; justify-content: space-between; gap: 6px; }
+  .split b { font-weight: 500; }
+  .split span { color: var(--text-3); }
+  tbody th { text-align: left; font-weight: 400; vertical-align: middle; }
+  tbody th .chip { display: block; width: fit-content; margin-top: 3px; }
+  td { padding: 10px 12px; }
+  .track { position: relative; height: 10px; border-radius: 3px; background: var(--surface-2); }
+  .mid { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--text-3); opacity: 0.7; }
+  .fill { position: absolute; top: 0; bottom: 0; border-radius: 3px; }
+  .fill.attn { left: 0; }
+  .attn { background: var(--text-3); }
+  .bull { background: var(--bull); }
+  .bear { background: var(--bear); }
+  .planned { background: var(--surface); opacity: 0.55; }
+  .sw.planned { background: var(--bear); opacity: 0.45; }
+  .cap { font-size: 0.75rem; color: var(--text-3); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .note { margin: 8px 0 0; }
+  .map svg.narrow { display: none; }
+  @media (max-width: 560px) {
+    .map svg.wide { display: none; }
+    .map svg.narrow { display: block; }
+    /* Board: one block per name, each signal on its own labelled line. */
+    table { min-width: 0; table-layout: auto; }
+    thead { display: none; }
+    tbody tr { display: block; padding: 10px 0; border-bottom: 1px solid var(--grid); }
+    tbody tr:last-child { border-bottom: 0; }
+    tbody th, tbody td { display: block; width: auto; padding: 4px 0; border: 0; }
+    tbody th { display: flex; align-items: center; gap: 8px; }
+    tbody th .chip { display: inline-block; margin: 0; }
+    tbody td::before { content: attr(data-label); display: block; font-size: 0.72rem; color: var(--text-2); margin-bottom: 3px; }
+  }
+</style>

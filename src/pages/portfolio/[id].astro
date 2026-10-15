@@ -3,6 +3,9 @@ import Base from "../../layouts/Base.astro";
 import PerformanceChart from "../../components/PerformanceChart.astro";
 import InsiderActivity from "../../components/InsiderActivity.astro";
 import RetailPulse from "../../components/RetailPulse.astro";
+import SentimentGlance from "../../components/SentimentGlance.astro";
+import sentimentData from "../../data/sentiment.json";
+import insiderData from "../../data/insiders.json";
 import { posts } from "../../lib/posts.js";
 import { portfolios, fmtPct, fmtPrice } from "../../lib/portfolio.js";
 
@@ -25,6 +28,11 @@ const insiderItems = [
   ...holdings.filter((h) => !h.isCash).map((h) => ({ ...h, kind: "holding" })),
   ...watchlist.map((w) => ({ ...w, kind: "watchlist" })),
 ];
+// Only show the details toggle when one of its panels has something to show.
+const hasDetails = insiderItems.some((it) => {
+  const s = sentimentData.tickers?.[it.ticker];
+  return s?.attention || s?.chatter?.relevant || insiderData.tickers?.[it.ticker]?.status === "ok";
+});
 ---
 <Base title={`Portfolio: ${p.name}`} description={`My ${p.name} portfolio: holdings, weights and performance against the ${benchNames}.`}>
   <h1>Portfolio</h1>
@@ -113,9 +121,13 @@ const insiderItems = [
     </section>}
   </div>
 
-  <RetailPulse items={insiderItems} />
+  <SentimentGlance items={insiderItems} />
 
-  <InsiderActivity items={insiderItems} />
+  {hasDetails && <details class="sentiment-details">
+    <summary>Details: what people are saying and who's trading</summary>
+    <RetailPulse items={insiderItems} />
+    <InsiderActivity items={insiderItems} />
+  </details>}
 
   <p class="muted small" style="margin-top:32px">
     Method: the portfolio line is a model portfolio at the target weights above, rebalanced daily. Each holding counts from its entry date, and until then its weight is held as cash. Prices come from Yahoo Finance (adjusted for splits and dividends), and listings in other currencies are converted to {currency} at the daily rate. Not audited. Past performance says nothing reliable about future results.
@@ -131,6 +143,10 @@ const insiderItems = [
   .tabs a:hover { text-decoration: none; color: var(--text); }
   .tabs a[aria-current="page"] { color: var(--text); border-bottom-color: var(--accent); }
   .one-col { max-width: 520px; }
+  .sentiment-details { margin-top: 16px; }
+  .sentiment-details > summary { cursor: pointer; font-weight: 500; color: var(--text-2); padding: 10px 0; }
+  .sentiment-details > summary:hover { color: var(--text); }
+  .sentiment-details[open] > summary { color: var(--text); }
   .two-col { display: grid; grid-template-columns: 1fr 1.4fr; gap: 24px; }
   @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
   .srow { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 12px; padding: 6px 0; font-size: 0.9rem; }
