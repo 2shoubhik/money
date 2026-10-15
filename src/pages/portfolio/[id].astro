@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import PerformanceChart from "../../components/PerformanceChart.astro";
 import InsiderActivity from "../../components/InsiderActivity.astro";
+import RetailPulse from "../../components/RetailPulse.astro";
 import { posts } from "../../lib/posts.js";
 import { portfolios, fmtPct, fmtPrice } from "../../lib/portfolio.js";
 
@@ -111,6 +112,8 @@ const insiderItems = [
       </div>
     </section>}
   </div>
+
+  <RetailPulse items={insiderItems} />
 
   <InsiderActivity items={insiderItems} />
 

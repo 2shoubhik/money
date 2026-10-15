@@ -1,0 +1,116 @@
+{
+ "updatedAt": "2026-10-15T11:53:41.007Z",
+ "tickers": {
+  "SNPS": {
+   "query": "$SNPS",
+   "attention": {
+    "avg7": 230,
+    "avg90": 261,
+    "ratio": 0.88,
+    "label": "Normal",
+    "article": "Synopsys"
+   }
+  },
+  "GOOGL": {
+   "query": "$GOOGL",
+   "attention": {
+    "avg7": 2778,
+    "avg90": 2921,
+    "ratio": 0.95,
+    "label": "Normal",
+    "article": "Alphabet Inc."
+   }
+  },
+  "COST": {
+   "query": "$COST",
+   "attention": {
+    "avg7": 1974,
+    "avg90": 2255,
+    "ratio": 0.88,
+    "label": "Normal",
+    "article": "Costco"
+   }
+  },
+  "MFC.TO": {
+   "query": "$MFC",
+   "attention": {
+    "avg7": 127,
+    "avg90": 149,
+    "ratio": 0.85,
+    "label": "Normal",
+    "article": "Manulife"
+   }
+  },
+  "SHOP.TO": {
+   "query": "$SHOP",
+   "attention": {
+    "avg7": 869,
+    "avg90": 989,
+    "ratio": 0.88,
+    "label": "Normal",
+    "article": "Shopify"
+   }
+  },
+  "BTC-USD": {
+   "query": "$BTC",
+   "attention": {
+    "avg7": 3766,
+    "avg90": 2790,
+    "ratio": 1.35,
+    "label": "Elevated",
+    "article": "Bitcoin"
+   }
+  },
+  "AVGO": {
+   "query": "$AVGO",
+   "attention": {
+    "avg7": 906,
+    "avg90": 889,
+    "ratio": 1.02,
+    "label": "Normal",
+    "article": "Broadcom"
+   }
+  },
+  "CRWV": {
+   "query": "$CRWV",
+   "attention": {
+    "avg7": 941,
+    "avg90": 519,
+    "ratio": 1.81,
+    "label": "Spiking",
+    "article": "CoreWeave"
+   }
+  },
+  "VST": {
+   "query": "$VST",
+   "attention": {
+    "avg7": 127,
+    "avg90": 134,
+    "ratio": 0.95,
+    "label": "Normal",
+    "article": "Vistra Corp."
+   }
+  },
+  "TIIL.NS": {
+   "query": "\"Technocraft Industries\""
+  },
+  "QPOWER.NS": {
+   "query": "\"Quality Power Electrical Equipments\""
+  },
+  "SBCL.NS": {
+   "query": "\"Shivalik Bimetal Controls\""
+  },
+  "SHILPAMED.NS": {
+   "query": "\"Shilpa Medicare\""
+  },
+  "NRBBEARING.NS": {
+   "query": "\"NRB Bearings\""
+  },
+  "GUFICBIO.NS": {
+   "query": "\"Gufic Biosciences\""
+  },
+  "ANANDRATHI.NS": {
+   "query": "\"Anand Rathi Wealth\""
+  }
+ }
+}

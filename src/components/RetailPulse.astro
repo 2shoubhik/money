@@ -1,0 +1,100 @@
+---
+// Retail attention (Wikipedia views) and chatter (Bluesky posts labelled by
+// Claude) per name. Data comes from scripts/fetch-sentiment.mjs at build time.
+import sentiment from "../data/sentiment.json";
+const { items } = Astro.props; // [{ ticker, displayTicker, name, kind }]
+
+const rows = items
+  .map((it) => ({ ...it, s: sentiment.tickers?.[it.ticker] }))
+  .filter((r) => r.s && (r.s.attention || r.s.chatter));
+const hasChatter = rows.some((r) => r.s.chatter);
+const updated = sentiment.updatedAt
+  ? new Date(sentiment.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+  : null;
+const chatterKey = (l) => (/bullish/i.test(l) ? "up" : /bearish/i.test(l) ? "down" : "flat");
+const attnIcon = { Spiking: "▲▲", Elevated: "▲", Normal: "●", Quiet: "▼" };
+const searchUrl = (q) => `https://bsky.app/search?q=${encodeURIComponent(q)}`;
+---
+{rows.length > 0 && (
+  <section class="pulse" aria-labelledby="pulse-title">
+    <h2 id="pulse-title">Retail pulse</h2>
+    <p class="muted small intro">
+      How much attention each name is getting, and what people are saying about it. <strong>Attention</strong> compares Wikipedia page views over the last 7 days with the 90 days before, since spikes tend to line up with retail interest.
+      {hasChatter && <> <strong>Chatter</strong> is the last 7 days of Bluesky posts, each labelled bullish, bearish or neutral by Claude (off-topic posts are dropped).</>}
+      {" "}It's a mood reading, not a forecast. Updated {updated}.
+    </p>
+    <div class="grid">
+      {rows.map(({ ticker, displayTicker, name, kind, s }) => {
+        const a = s.attention;
+        const c = s.chatter;
+        const total = c ? c.bullish + c.neutral + c.bearish : 0;
+        return (
+          <article class="card pc">
+            <header>
+              <div>
+                <span class="ticker">{displayTicker}</span>
+                {kind === "watchlist" && <span class="chip">Watchlist</span>}
+                <div class="muted small">{name}</div>
+              </div>
+            </header>
+            {a && (
+              <div class="row">
+                <span class="k">Attention</span>
+                <span class={`sig attn-${a.label.toLowerCase()}`}><span aria-hidden="true">{attnIcon[a.label] ?? "●"}</span> {a.label}</span>
+                <span class="muted small num">{a.ratio}× usual · {a.avg7.toLocaleString("en-US")} views/day</span>
+              </div>
+            )}
+            {c && (
+              <div class="chatter">
+                <div class="row">
+                  <span class="k">Chatter</span>
+                  <span class={`sig chat-${chatterKey(c.label)}`}>{c.label}</span>
+                  <span class="muted small num">{c.mentions} post{c.mentions === 1 ? "" : "s"} this week</span>
+                </div>
+                {total > 0 && (
+                  <>
+                    <div class="bar" role="img" aria-label={`${c.bullish} bullish, ${c.neutral} neutral, ${c.bearish} bearish`}>
+                      {c.bullish > 0 && <span class="b-up" style={`flex:${c.bullish}`}></span>}
+                      {c.neutral > 0 && <span class="b-flat" style={`flex:${c.neutral}`}></span>}
+                      {c.bearish > 0 && <span class="b-down" style={`flex:${c.bearish}`}></span>}
+                    </div>
+                    <div class="legend small num">
+                      <span><i class="b-up"></i>{c.bullish} bullish</span>
+                      <span><i class="b-flat"></i>{c.neutral} neutral</span>
+                      <span><i class="b-down"></i>{c.bearish} bearish</span>
+                    </div>
+                  </>
+                )}
+                {c.summary && <p class="summary">{c.summary}</p>}
+                <a class="small" href={searchUrl(s.query)} target="_blank" rel="noopener">See the posts on Bluesky →</a>
+              </div>
+            )}
+          </article>
+        );
+      })}
+    </div>
+  </section>
+)}
+
+<style>
+  .intro { max-width: 760px; margin-top: -4px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin-top: 16px; }
+  .pc header { margin-bottom: 10px; }
+  .pc .chip { margin-left: 6px; vertical-align: 2px; }
+  .row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .k { font-size: 0.75rem; color: var(--text-2); width: 64px; }
+  .sig { font-size: 0.78rem; font-weight: 600; white-space: nowrap; padding: 3px 9px; border-radius: 999px; background: var(--surface-2); color: var(--text-2); }
+  .attn-spiking, .attn-elevated { color: var(--accent); }
+  .chat-up { color: var(--good); }
+  .chat-down { color: var(--bad); }
+  .chatter { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--grid); display: grid; gap: 8px; }
+  .bar { display: flex; gap: 2px; height: 8px; }
+  .bar span { border-radius: 2px; min-width: 4px; }
+  .b-up { background: var(--good); }
+  .b-flat { background: var(--text-3); opacity: 0.5; }
+  .b-down { background: var(--bad); }
+  .legend { display: flex; gap: 14px; color: var(--text-2); }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  .summary { margin: 0; font-size: 0.875rem; color: var(--text-2); }
+</style>

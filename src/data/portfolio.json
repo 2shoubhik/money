@@ -11,18 +11,18 @@
         { "symbol": "^GSPTSE", "name": "S&P/TSX Composite" }
       ],
       "holdings": [
-        { "ticker": "SNPS", "name": "Synopsys", "sector": "Technology", "weight": 30, "entryDate": "2025-01-02", "post": "snps-thesis" },
-        { "ticker": "GOOGL", "name": "Alphabet", "sector": "Internet", "weight": 5, "entryDate": "2025-01-02" },
-        { "ticker": "COST", "name": "Costco", "sector": "Retail", "weight": 5, "entryDate": "2025-01-02" },
-        { "ticker": "MFC.TO", "name": "Manulife Financial Corp.", "sector": "Financials", "weight": 15, "entryDate": "2025-03-03" },
-        { "ticker": "SHOP.TO", "name": "Shopify", "sector": "Software", "weight": 5, "entryDate": "2025-04-07" },
-        { "ticker": "BTC-USD", "name": "Bitcoin", "sector": "Cryptocurrency", "weight": 20, "entryDate": "2025-06-02" },
+        { "ticker": "SNPS", "name": "Synopsys", "wiki": "Synopsys", "sector": "Technology", "weight": 30, "entryDate": "2025-01-02", "post": "snps-thesis" },
+        { "ticker": "GOOGL", "name": "Alphabet", "wiki": "Alphabet Inc.", "sector": "Internet", "weight": 5, "entryDate": "2025-01-02" },
+        { "ticker": "COST", "name": "Costco", "wiki": "Costco", "sector": "Retail", "weight": 5, "entryDate": "2025-01-02" },
+        { "ticker": "MFC.TO", "name": "Manulife Financial Corp.", "wiki": "Manulife", "sector": "Financials", "weight": 15, "entryDate": "2025-03-03" },
+        { "ticker": "SHOP.TO", "name": "Shopify", "wiki": "Shopify", "sector": "Software", "weight": 5, "entryDate": "2025-04-07" },
+        { "ticker": "BTC-USD", "name": "Bitcoin", "wiki": "Bitcoin", "sector": "Cryptocurrency", "weight": 20, "entryDate": "2025-06-02" },
         { "ticker": "CASH", "name": "Cash", "sector": "Cash", "weight": 20 }
       ],
       "watchlist": [
-        { "ticker": "AVGO", "name": "Broadcom", "note": "Waiting for a better entry after the cycle bottoms.", "post": "avgo-deep-dive" },
-        { "ticker": "CRWV", "name": "CoreWeave", "note": "Studying Debt structure alongside growth potential." },
-        { "ticker": "VST", "name": "Vistra", "note": "Monitoring Volatility ; studying fundamentals" }
+        { "ticker": "AVGO", "name": "Broadcom", "wiki": "Broadcom", "note": "Waiting for a better entry after the cycle bottoms.", "post": "avgo-deep-dive" },
+        { "ticker": "CRWV", "name": "CoreWeave", "wiki": "CoreWeave", "note": "Studying Debt structure alongside growth potential." },
+        { "ticker": "VST", "name": "Vistra", "wiki": "Vistra Corp.", "note": "Monitoring Volatility ; studying fundamentals" }
       ]
     },
     {
