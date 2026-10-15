@@ -1,0 +1,324 @@
+{
+ "updatedAt": "2026-10-15T11:34:51.139Z",
+ "windowDays": 90,
+ "tickers": {
+  "SNPS": {
+   "status": "ok",
+   "filings": 11,
+   "buys": {
+    "value": 0,
+    "planned": 0,
+    "insiders": 0,
+    "trades": 0
+   },
+   "sells": {
+    "value": 44607002,
+    "planned": 37992977,
+    "insiders": 4,
+    "trades": 8
+   },
+   "top": [
+    {
+     "owner": "DE GEUS AART",
+     "title": "EXECUTIVE CHAIR",
+     "type": "sell",
+     "value": 32518294,
+     "planned": true,
+     "last": "2026-09-01"
+    },
+    {
+     "owner": "Kankanwadi Sudhindra",
+     "title": "Deputy CFO & CAO",
+     "type": "sell",
+     "value": 6039340,
+     "planned": false,
+     "last": "2026-10-06"
+    },
+    {
+     "owner": "Ghazi Sassine",
+     "title": "PRESIDENT AND CEO",
+     "type": "sell",
+     "value": 5474683,
+     "planned": true,
+     "last": "2026-09-15"
+    },
+    {
+     "owner": "LEE JANET",
+     "title": "GC & Corporate Secretary",
+     "type": "sell",
+     "value": 574685,
+     "planned": false,
+     "last": "2026-10-06"
+    }
+   ],
+   "signal": {
+    "key": "routine",
+    "label": "Routine selling"
+   }
+  },
+  "GOOGL": {
+   "status": "ok",
+   "filings": 44,
+   "buys": {
+    "value": 0,
+    "planned": 0,
+    "insiders": 0,
+    "trades": 0
+   },
+   "sells": {
+    "value": 232894,
+    "planned": 0,
+    "insiders": 2,
+    "trades": 4
+   },
+   "top": [
+    {
+     "owner": "Saraci Marsida",
+     "title": "VP, Chief Accounting Officer",
+     "type": "sell",
+     "value": 149607,
+     "planned": false,
+     "last": "2026-07-29"
+    },
+    {
+     "owner": "ARNOLD FRANCES",
+     "title": "Insider",
+     "type": "sell",
+     "value": 83287,
+     "planned": false,
+     "last": "2026-09-30"
+    }
+   ],
+   "signal": {
+    "key": "light",
+    "label": "Light selling"
+   }
+  },
+  "COST": {
+   "status": "ok",
+   "filings": 10,
+   "buys": {
+    "value": 0,
+    "planned": 0,
+    "insiders": 0,
+    "trades": 0
+   },
+   "sells": {
+    "value": 3802400,
+    "planned": 0,
+    "insiders": 3,
+    "trades": 3
+   },
+   "top": [
+    {
+     "owner": "Adamo Claudine",
+     "title": "Executive Vice President",
+     "type": "sell",
+     "value": 2015046,
+     "planned": false,
+     "last": "2026-09-29"
+    },
+    {
+     "owner": "Wilcox William Richard",
+     "title": "Executive Vice President",
+     "type": "sell",
+     "value": 1054026,
+     "planned": false,
+     "last": "2026-10-13"
+    },
+    {
+     "owner": "Frates Caton",
+     "title": "Sr. Executive Vice President",
+     "type": "sell",
+     "value": 733328,
+     "planned": false,
+     "last": "2026-09-29"
+    }
+   ],
+   "signal": {
+    "key": "selling",
+    "label": "Net selling"
+   }
+  },
+  "MFC.TO": {
+   "status": "ok",
+   "filings": 0,
+   "buys": {
+    "value": 0,
+    "planned": 0,
+    "insiders": 0,
+    "trades": 0
+   },
+   "sells": {
+    "value": 0,
+    "planned": 0,
+    "insiders": 0,
+    "trades": 0
+   },
+   "top": [],
+   "signal": {
+    "key": "quiet",
+    "label": "No open-market trades"
+   }
+  },
+  "SHOP.TO": {
+   "status": "ok",
+   "filings": 1,
+   "buys": {
+    "value": 0,
+    "planned": 0,
+    "insiders": 0,
+    "trades": 0
+   },
+   "sells": {
+    "value": 0,
+    "planned": 0,
+    "insiders": 0,
+    "trades": 0
+   },
+   "top": [],
+   "signal": {
+    "key": "quiet",
+    "label": "No open-market trades"
+   }
+  },
+  "AVGO": {
+   "status": "ok",
+   "filings": 3,
+   "buys": {
+    "value": 0,
+    "planned": 0,
+    "insiders": 0,
+    "trades": 0
+   },
+   "sells": {
+    "value": 250006184,
+    "planned": 250006184,
+    "insiders": 1,
+    "trades": 16
+   },
+   "top": [
+    {
+     "owner": "SAMUELI HENRY",
+     "title": "Director",
+     "type": "sell",
+     "value": 250006184,
+     "planned": true,
+     "last": "2026-09-23"
+    }
+   ],
+   "signal": {
+    "key": "routine",
+    "label": "Routine selling"
+   }
+  },
+  "CRWV": {
+   "status": "ok",
+   "filings": 74,
+   "buys": {
+    "value": 0,
+    "planned": 0,
+    "insiders": 0,
+    "trades": 0
+   },
+   "sells": {
+    "value": 964774572,
+    "planned": 456272707,
+    "insiders": 10,
+    "trades": 584
+   },
+   "top": [
+    {
+     "owner": "Magnetar Financial LLC",
+     "title": "10% owner",
+     "type": "sell",
+     "value": 478784918,
+     "planned": false,
+     "last": "2026-08-14"
+    },
+    {
+     "owner": "Intrator Michael N",
+     "title": "CEO and President",
+     "type": "sell",
+     "value": 299564993,
+     "planned": false,
+     "last": "2026-09-30"
+    },
+    {
+     "owner": "McBee Brannin",
+     "title": "Chief Development Officer",
+     "type": "sell",
+     "value": 132755135,
+     "planned": false,
+     "last": "2026-09-30"
+    },
+    {
+     "owner": "McVeety Kristen J",
+     "title": "GC and Secretary",
+     "type": "sell",
+     "value": 22443869,
+     "planned": false,
+     "last": "2026-09-30"
+    },
+    {
+     "owner": "Agrawal Nitin",
+     "title": "Chief Financial Officer",
+     "type": "sell",
+     "value": 13636942,
+     "planned": true,
+     "last": "2026-10-12"
+    }
+   ],
+   "signal": {
+    "key": "selling",
+    "label": "Net selling"
+   }
+  },
+  "VST": {
+   "status": "ok",
+   "filings": 6,
+   "buys": {
+    "value": 1173069,
+    "planned": 0,
+    "insiders": 1,
+    "trades": 3
+   },
+   "sells": {
+    "value": 16626776,
+    "planned": 16626776,
+    "insiders": 2,
+    "trades": 6
+   },
+   "top": [
+    {
+     "owner": "HUDSON SCOTT A",
+     "title": "EVP & President Vistra Retail",
+     "type": "sell",
+     "value": 10306176,
+     "planned": true,
+     "last": "2026-10-06"
+    },
+    {
+     "owner": "Moldovan Kristopher E.",
+     "title": "EVP and CFO",
+     "type": "sell",
+     "value": 6320600,
+     "planned": true,
+     "last": "2026-10-07"
+    },
+    {
+     "owner": "BURKE JAMES A",
+     "title": "President and CEO",
+     "type": "buy",
+     "value": 1173069,
+     "planned": false,
+     "last": "2026-09-01"
+    }
+   ],
+   "signal": {
+    "key": "routine",
+    "label": "Routine selling"
+   }
+  }
+ }
+}

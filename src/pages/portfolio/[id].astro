@@ -1,6 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import PerformanceChart from "../../components/PerformanceChart.astro";
+import InsiderActivity from "../../components/InsiderActivity.astro";
 import { posts } from "../../lib/posts.js";
 import { portfolios, fmtPct, fmtPrice } from "../../lib/portfolio.js";
 
@@ -19,6 +20,10 @@ const maxW = Math.max(...holdings.map((h) => h.weight));
 const alpha = summary.sinceInception - summary.benchmark;
 const asOfLong = new Date(asOf + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 const benchNames = p.benchmarks.map((b) => b.name).join(" and ");
+const insiderItems = [
+  ...holdings.filter((h) => !h.isCash).map((h) => ({ ...h, kind: "holding" })),
+  ...watchlist.map((w) => ({ ...w, kind: "watchlist" })),
+];
 ---
 <Base title={`Portfolio: ${p.name}`} description={`My ${p.name} portfolio: holdings, weights and performance against the ${benchNames}.`}>
   <h1>Portfolio</h1>
@@ -106,6 +111,8 @@ const benchNames = p.benchmarks.map((b) => b.name).join(" and ");
       </div>
     </section>}
   </div>
+
+  <InsiderActivity items={insiderItems} />
 
   <p class="muted small" style="margin-top:32px">
     Method: the portfolio line is a model portfolio at the target weights above, rebalanced daily. Each holding counts from its entry date, and until then its weight is held as cash. Prices come from Yahoo Finance (adjusted for splits and dividends), and listings in other currencies are converted to {currency} at the daily rate. Not audited. Past performance says nothing reliable about future results.

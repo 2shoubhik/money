@@ -1,0 +1,86 @@
+---
+// Insider open-market trades (SEC Form 4) over the last 90 days, one card per
+// name. Data comes from scripts/fetch-insiders.mjs at build time.
+import insiders from "../data/insiders.json";
+const { items } = Astro.props; // [{ ticker, displayTicker, name, kind }]
+
+const money = (v) => (v >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : v >= 1e6 ? `$${(v / 1e6).toFixed(1)}M` : `$${Math.round(v / 1e3)}K`);
+const ACRONYMS = /\b(Ceo|Cfo|Coo|Cto|Cao|Evp|Svp|Vp|Llc|Lp|Ii|Iii|Iv)\b/g;
+const titleCase = (s) =>
+  s === s.toUpperCase()
+    ? s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()).replace(/\b(And|Of|The)\b/g, (w) => w.toLowerCase()).replace(ACRONYMS, (w) => w.toUpperCase())
+    : s;
+const icon = { buying: "▲", selling: "▼", routine: "●", light: "●", quiet: "–" };
+
+const rows = items
+  .map((it) => ({ ...it, d: insiders.tickers?.[it.ticker] }))
+  .filter((r) => r.d && r.d.status === "ok");
+const updated = insiders.updatedAt
+  ? new Date(insiders.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+  : null;
+---
+{rows.length > 0 && (
+  <section class="insiders" aria-labelledby="insiders-title">
+    <h2 id="insiders-title">What insiders are doing</h2>
+    <p class="muted small intro">
+      Open-market buys and sells by executives, directors and 10% owners over the last {insiders.windowDays} days, from SEC Form 4 filings. Sales under pre-arranged 10b5-1 plans count as routine, because they're scheduled months ahead and say little about what insiders think now. Buying with their own money is the stronger signal. Updated {updated}.
+    </p>
+    <div class="grid">
+      {rows.map(({ ticker, displayTicker, name, kind, d }) => {
+        const canadianOnly = /\.TO$/.test(ticker) && d.filings === 0;
+        return (
+          <article class="card ins">
+            <header>
+              <div>
+                <span class="ticker">{displayTicker}</span>
+                {kind === "watchlist" && <span class="chip">Watchlist</span>}
+                <div class="muted small">{name}</div>
+              </div>
+              {!canadianOnly && <span class={`sig sig-${d.signal.key}`}><span aria-hidden="true">{icon[d.signal.key]}</span> {d.signal.label}</span>}
+            </header>
+            {canadianOnly ? (
+              <p class="muted small">Insiders here report to Canadian regulators (SEDI), not the SEC. Not tracked yet.</p>
+            ) : d.signal.key === "quiet" ? (
+              <p class="muted small">No insider buys or sells on the open market in the last {insiders.windowDays} days.</p>
+            ) : (
+              <>
+                <dl class="totals">
+                  <div><dt>Bought</dt><dd class="num">{d.buys.value ? money(d.buys.value) : "—"}</dd><dd class="muted small">{d.buys.insiders ? `${d.buys.insiders} insider${d.buys.insiders > 1 ? "s" : ""}` : "none"}</dd></div>
+                  <div><dt>Sold</dt><dd class="num">{d.sells.value ? money(d.sells.value) : "—"}</dd><dd class="muted small">{d.sells.insiders ? `${d.sells.insiders} insider${d.sells.insiders > 1 ? "s" : ""}` : "none"}</dd></div>
+                  <div><dt>Planned sales</dt><dd class="num">{d.sells.value ? `${Math.round((100 * d.sells.planned) / d.sells.value)}%` : "—"}</dd><dd class="muted small">under 10b5-1</dd></div>
+                </dl>
+                <ul class="top">
+                  {d.top.slice(0, 3).map((t) => (
+                    <li>
+                      <span class={t.type === "buy" ? "up" : ""}>{t.type === "buy" ? "Bought" : "Sold"} {money(t.value)}</span>
+                      <span class="who">{titleCase(t.owner)}, <span class="muted">{titleCase(t.title)}</span>{t.planned && t.type === "sell" ? <span class="muted"> · planned</span> : ""}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </article>
+        );
+      })}
+    </div>
+  </section>
+)}
+
+<style>
+  .intro { max-width: 760px; margin-top: -4px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin-top: 16px; }
+  .ins header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .ins .chip { margin-left: 6px; vertical-align: 2px; }
+  .ins p { margin: 0; }
+  .sig { font-size: 0.78rem; font-weight: 600; white-space: nowrap; padding: 3px 9px; border-radius: 999px; background: var(--surface-2); color: var(--text-2); }
+  .sig-buying { color: var(--good); }
+  .sig-selling { color: var(--bad); }
+  .totals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 12px; }
+  .totals dt { font-size: 0.75rem; color: var(--text-2); }
+  .totals dd { margin: 0; }
+  .totals dd.num { font-weight: 600; font-size: 1.05rem; }
+  .top { list-style: none; padding: 12px 0 0; margin: 0; border-top: 1px solid var(--grid); display: grid; gap: 6px; font-size: 0.84rem; }
+  .top li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+  .top li > span:first-child { font-variant-numeric: tabular-nums; font-weight: 500; }
+  .who { overflow: hidden; text-overflow: ellipsis; }
+</style>
