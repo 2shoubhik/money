@@ -12,7 +12,7 @@
       ],
       "holdings": [
         { "ticker": "SNPS", "name": "Synopsys", "wiki": "Synopsys", "sector": "Technology", "weight": 30, "entryDate": "2025-01-02", "post": "snps-thesis" },
-        { "ticker": "GOOGL", "name": "Alphabet", "wiki": "Alphabet Inc.", "sector": "Internet", "weight": 5, "entryDate": "2025-01-02" },
+        { "ticker": "GOOGL", "name": "Alphabet", "wiki": "Alphabet Inc.", "aliases": ["Google"], "sector": "Internet", "weight": 5, "entryDate": "2025-01-02" },
         { "ticker": "COST", "name": "Costco", "wiki": "Costco", "sector": "Retail", "weight": 5, "entryDate": "2025-01-02" },
         { "ticker": "MFC.TO", "name": "Manulife Financial Corp.", "wiki": "Manulife", "sector": "Financials", "weight": 15, "entryDate": "2025-03-03" },
         { "ticker": "SHOP.TO", "name": "Shopify", "wiki": "Shopify", "sector": "Software", "weight": 5, "entryDate": "2025-04-07" },
