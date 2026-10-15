@@ -12,7 +12,8 @@ A static Astro site with a live portfolio dashboard and research posts.
 | Change your name, handle or domain | Edit `src/config.js` |
 | Preview locally | `npm run dev`, then open http://localhost:4321 |
 | Refresh prices locally | `npm run prices` |
-| Refresh retail pulse locally | `npm run sentiment` (attention works with no setup; chatter needs `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD` and `ANTHROPIC_API_KEY` in `.env`) |
+| Refresh retail pulse (free) | `npm run sentiment`: Wikipedia attention, plus a word-list read of Bluesky chatter if `BLUESKY_HANDLE` and `BLUESKY_APP_PASSWORD` are in `.env` |
+| Deeper chatter read (costs a few cents) | `npm run sentiment:claude`, then commit `src/data/sentiment.json` and push. Needs `ANTHROPIC_API_KEY` in `.env`. Builds never call Claude on their own. |
 | Refresh insider trades locally | `npm run insiders` (needs `SEC_CONTACT_EMAIL` in a local `.env` file, which is git-ignored) |
 
 Tickers use Yahoo Finance symbols: `AAPL`, `BRK-B`, `SHOP.TO` (TSX), `RELIANCE.NS` (NSE). Non-USD listings are converted to USD automatically.
@@ -27,5 +28,5 @@ Only weights and % returns are published. Don't add share counts or amounts to `
 2. In Vercel, choose **Add New → Project**, import the repo, and keep the detected Astro settings (build `npm run build`, output `dist`).
 3. Daily prices: in Vercel, open **Settings → Git → Deploy Hooks** and create a hook on `main`. Copy its URL into GitHub as a repo secret named `VERCEL_DEPLOY_HOOK` (**Settings → Secrets and variables → Actions**). `.github/workflows/daily-rebuild.yml` then triggers a rebuild every weekday after market close.
 4. Insider data: in Vercel, open **Settings → Environment Variables** and add `SEC_CONTACT_EMAIL` (the SEC requires a contact address on automated requests). Without it, builds reuse the last committed `src/data/insiders.json`.
-5. Retail pulse chatter: add `BLUESKY_HANDLE`, `BLUESKY_APP_PASSWORD` and `ANTHROPIC_API_KEY` as Vercel environment variables. Without them the panel shows Wikipedia attention only.
+5. Retail pulse chatter: add `BLUESKY_HANDLE` and `BLUESKY_APP_PASSWORD` as Vercel environment variables for the free daily read. Vercel builds never call Claude, so `ANTHROPIC_API_KEY` isn't needed there.
 6. Set `url` in `src/config.js` to your Vercel (or custom) domain.

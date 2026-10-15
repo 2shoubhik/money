@@ -14,13 +14,14 @@ const updated = sentiment.updatedAt
 const chatterKey = (l) => (/bullish/i.test(l) ? "up" : /bearish/i.test(l) ? "down" : "flat");
 const attnIcon = { Spiking: "▲▲", Elevated: "▲", Normal: "●", Quiet: "▼" };
 const searchUrl = (q) => `https://bsky.app/search?q=${encodeURIComponent(q)}`;
+const shortDate = (iso) => new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 ---
 {rows.length > 0 && (
   <section class="pulse" aria-labelledby="pulse-title">
     <h2 id="pulse-title">Retail pulse</h2>
     <p class="muted small intro">
       How much attention each name is getting, and what people are saying about it. <strong>Attention</strong> compares Wikipedia page views over the last 7 days with the 90 days before, since spikes tend to line up with retail interest.
-      {hasChatter && <> <strong>Chatter</strong> is the last 7 days of Bluesky posts, each labelled bullish, bearish or neutral by Claude (off-topic posts are dropped).</>}
+      {hasChatter && <> <strong>Chatter</strong> is the last 7 days of Bluesky posts, labelled bullish, bearish or neutral. Most days that's a quick word-match read; when I ask for a deeper read, Claude goes through each post, drops off-topic ones and sums up the discussion. Each card says which one you're looking at.</>}
       {" "}It's a mood reading, not a forecast. Updated {updated}.
     </p>
     <div class="grid">
@@ -65,7 +66,10 @@ const searchUrl = (q) => `https://bsky.app/search?q=${encodeURIComponent(q)}`;
                     </div>
                   </>
                 )}
-                {c.summary && <p class="summary">{c.summary}</p>}
+                {c.summary && c.method !== "wordlist" && <p class="summary">{c.summary}</p>}
+                {c.classifiedAt && (
+                  <p class="method muted small">{c.method === "wordlist" ? "Quick word-match read" : "Read by Claude"} · {shortDate(c.classifiedAt)}</p>
+                )}
                 <a class="small" href={searchUrl(s.query)} target="_blank" rel="noopener">See the posts on Bluesky →</a>
               </div>
             )}
@@ -97,4 +101,5 @@ const searchUrl = (q) => `https://bsky.app/search?q=${encodeURIComponent(q)}`;
   .legend span { display: flex; align-items: center; gap: 5px; }
   .legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
   .summary { margin: 0; font-size: 0.875rem; color: var(--text-2); }
+  .method { margin: 0; font-size: 0.75rem; }
 </style>

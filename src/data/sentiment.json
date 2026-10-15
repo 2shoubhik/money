@@ -21,7 +21,8 @@
     "neutral": 17,
     "score": 1,
     "label": "Mostly neutral",
-    "summary": "Posts mainly relay a Nikkei report that Synopsys is looking to work with Chinese AI labs to speed up chip design, along with a $1 billion accelerated share repurchase with JPMorgan. Other posts mention RSI overbought screens, a Binance perpetual contract listing, a fund increasing its stake, and routine trading-activity lists."
+    "summary": "Posts mainly relay a Nikkei report that Synopsys is looking to work with Chinese AI labs to speed up chip design, along with a $1 billion accelerated share repurchase with JPMorgan. Other posts mention RSI overbought screens, a Binance perpetual contract listing, a fund increasing its stake, and routine trading-activity lists.",
+    "method": "claude"
    }
   },
   "GOOGL": {
@@ -44,7 +45,8 @@
     "neutral": 20,
     "score": -0.33,
     "label": "Leaning bearish",
-    "summary": "Posts mainly cover Google's AI product launches, especially the Gemini 4 Argon release and new app-building tools, alongside privacy lawsuits and settlements. Many other posts are casual mentions of Google Maps, Search, and other services with no investment angle."
+    "summary": "Posts mainly cover Google's AI product launches, especially the Gemini 4 Argon release and new app-building tools, alongside privacy lawsuits and settlements. Many other posts are casual mentions of Google Maps, Search, and other services with no investment angle.",
+    "method": "claude"
    }
   },
   "COST": {
@@ -67,7 +69,8 @@
     "neutral": 37,
     "score": 0,
     "label": "Mostly neutral",
-    "summary": "Posts are mostly everyday Costco shopping moments: hot dogs, food finds like burrata salad and chicken, cheap gas, and praise for pharmacy, tire and vaccine service. A few posts are about the wrestling act the Costco Guys rather than the company, and none offer a direct investment view."
+    "summary": "Posts are mostly everyday Costco shopping moments: hot dogs, food finds like burrata salad and chicken, cheap gas, and praise for pharmacy, tire and vaccine service. A few posts are about the wrestling act the Costco Guys rather than the company, and none offer a direct investment view.",
+    "method": "claude"
    }
   },
   "MFC.TO": {
@@ -83,7 +86,8 @@
     "source": "Bluesky",
     "mentions": 1,
     "classifiedAt": "2026-10-15T12:15:31.901Z",
-    "label": "Not enough chatter"
+    "label": "Not enough chatter",
+    "method": "wordlist"
    }
   },
   "SHOP.TO": {
@@ -106,7 +110,8 @@
     "neutral": 23,
     "score": -0.25,
     "label": "Mixed",
-    "summary": "Discussion centers on Shopify opening its catalog and checkout to AI shopping agents, alongside merchant and shopper complaints about its UI, AI suggestions, and checkout experience. Many posts are seller tips, developer notes, and promotional spam that only tag Shopify."
+    "summary": "Discussion centers on Shopify opening its catalog and checkout to AI shopping agents, alongside merchant and shopper complaints about its UI, AI suggestions, and checkout experience. Many posts are seller tips, developer notes, and promotional spam that only tag Shopify.",
+    "method": "claude"
    }
   },
   "BTC-USD": {
@@ -129,7 +134,8 @@
     "neutral": 14,
     "score": -0.45,
     "label": "Leaning bearish",
-    "summary": "Most posts cover Bitcoin's drop below $81K after a hot US inflation report, which brought nearly $1B in liquidations, ETF outflows and Fed rate-hike fears. Other threads include analysts calling for a mid-term uptrend despite a possible pullback, corporate and institutional buying, and complaints about mining data centers and electricity costs."
+    "summary": "Most posts cover Bitcoin's drop below $81K after a hot US inflation report, which brought nearly $1B in liquidations, ETF outflows and Fed rate-hike fears. Other threads include analysts calling for a mid-term uptrend despite a possible pullback, corporate and institutional buying, and complaints about mining data centers and electricity costs.",
+    "method": "claude"
    }
   },
   "AVGO": {
@@ -152,7 +158,8 @@
     "neutral": 15,
     "score": -0.91,
     "label": "Leaning bearish",
-    "summary": "Discussion centers on Broadcom CEO Hock Tan likening AI investors to casino gamblers and the resulting slide in chip stocks. Posts also cover Broadcom's large debt financing and Anthropic chip-leasing deal, plus ongoing frustration over VMware licensing changes."
+    "summary": "Discussion centers on Broadcom CEO Hock Tan likening AI investors to casino gamblers and the resulting slide in chip stocks. Posts also cover Broadcom's large debt financing and Anthropic chip-leasing deal, plus ongoing frustration over VMware licensing changes.",
+    "method": "claude"
    }
   },
   "CRWV": {
@@ -175,7 +182,8 @@
     "neutral": 6,
     "score": -0.94,
     "label": "Leaning bearish",
-    "summary": "Posts center on CoreWeave's steep share drop and its bonds yielding over 15%, alongside its roughly $52B debt load, record put volume, and Musk's 'yikes' reply. Many frame the slide as a sign of strain in AI data-center financing, while a few see it as a recurring cycle or expect Nvidia support."
+    "summary": "Posts center on CoreWeave's steep share drop and its bonds yielding over 15%, alongside its roughly $52B debt load, record put volume, and Musk's 'yikes' reply. Many frame the slide as a sign of strain in AI data-center financing, while a few see it as a recurring cycle or expect Nvidia support.",
+    "method": "claude"
    }
   },
   "VST": {
@@ -198,7 +206,8 @@
     "neutral": 7,
     "score": 0.6,
     "label": "Leaning bullish",
-    "summary": "Most posts cover the DOE's conditional loan commitment of up to $4.2B for uprates at Vistra's nuclear plants, alongside the stock's strong weekly gain and its exposure to AI data center demand. Other posts note bearish put sweeps, a CFO share sale, and Vistra's appearance in Pelosi and Thiel holdings trackers."
+    "summary": "Most posts cover the DOE's conditional loan commitment of up to $4.2B for uprates at Vistra's nuclear plants, alongside the stock's strong weekly gain and its exposure to AI data center demand. Other posts note bearish put sweeps, a CFO share sale, and Vistra's appearance in Pelosi and Thiel holdings trackers.",
+    "method": "claude"
    }
   },
   "TIIL.NS": {
@@ -207,7 +216,8 @@
     "source": "Bluesky",
     "mentions": 0,
     "classifiedAt": "2026-10-15T12:16:19.108Z",
-    "label": "Not enough chatter"
+    "label": "Not enough chatter",
+    "method": "wordlist"
    }
   },
   "QPOWER.NS": {
@@ -216,7 +226,8 @@
     "source": "Bluesky",
     "mentions": 0,
     "classifiedAt": "2026-10-15T12:16:19.484Z",
-    "label": "Not enough chatter"
+    "label": "Not enough chatter",
+    "method": "wordlist"
    }
   },
   "SBCL.NS": {
@@ -225,7 +236,8 @@
     "source": "Bluesky",
     "mentions": 0,
     "classifiedAt": "2026-10-15T12:16:20.308Z",
-    "label": "Not enough chatter"
+    "label": "Not enough chatter",
+    "method": "wordlist"
    }
   },
   "SHILPAMED.NS": {
@@ -234,7 +246,8 @@
     "source": "Bluesky",
     "mentions": 0,
     "classifiedAt": "2026-10-15T12:16:20.683Z",
-    "label": "Not enough chatter"
+    "label": "Not enough chatter",
+    "method": "wordlist"
    }
   },
   "NRBBEARING.NS": {
@@ -243,7 +256,8 @@
     "source": "Bluesky",
     "mentions": 0,
     "classifiedAt": "2026-10-15T12:14:48.935Z",
-    "label": "Not enough chatter"
+    "label": "Not enough chatter",
+    "method": "wordlist"
    }
   },
   "GUFICBIO.NS": {
@@ -252,7 +266,8 @@
     "source": "Bluesky",
     "mentions": 0,
     "classifiedAt": "2026-10-15T12:16:21.458Z",
-    "label": "Not enough chatter"
+    "label": "Not enough chatter",
+    "method": "wordlist"
    }
   },
   "ANANDRATHI.NS": {
@@ -261,7 +276,8 @@
     "source": "Bluesky",
     "mentions": 0,
     "classifiedAt": "2026-10-15T12:16:21.840Z",
-    "label": "Not enough chatter"
+    "label": "Not enough chatter",
+    "method": "wordlist"
    }
   }
  }

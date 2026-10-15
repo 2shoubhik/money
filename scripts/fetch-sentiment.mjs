@@ -1,9 +1,14 @@
 // "Retail pulse": two signals per holding and watchlist name, cached in
 // src/data/sentiment.json.
 //  1. Attention: Wikipedia page views this week vs. the prior 90 days (no key).
-//  2. Chatter: last 7 days of Bluesky posts, labelled bullish / bearish /
-//     neutral / irrelevant by Claude. Needs BLUESKY_HANDLE,
-//     BLUESKY_APP_PASSWORD and ANTHROPIC_API_KEY; skipped without them.
+//  2. Chatter: last 7 days of Bluesky posts (needs BLUESKY_HANDLE and
+//     BLUESKY_APP_PASSWORD), labelled bullish / bearish / neutral in one of two
+//     ways:
+//       - default, free: a finance word list. Rough, but costs nothing, so it
+//         is what every Vercel build runs.
+//       - SENTIMENT_MODE=claude (plus ANTHROPIC_API_KEY): Claude reads each
+//         post. Only run on request, via `npm run sentiment:claude`. A Claude
+//         reading is kept for CLAUDE_KEEP_DAYS before the free read replaces it.
 // Never fails the build: on any error the previous cached values are kept.
 import { readFile, writeFile } from "node:fs/promises";
 import Anthropic from "@anthropic-ai/sdk";
@@ -13,7 +18,8 @@ const CACHE = new URL("../src/data/sentiment.json", import.meta.url);
 const UA = "money-site/0.1 (github.com/2shoubhik/money)";
 const DAY = 864e5;
 const MAX_POSTS = 40; // per ticker sent to Claude
-const RECLASSIFY_AFTER = 20 * 36e5; // reuse Claude labels younger than 20h
+const CLAUDE_KEEP_DAYS = 3;
+const MODE = process.env.SENTIMENT_MODE === "claude" ? "claude" : "wordlist";
 
 const { portfolios } = JSON.parse(await readFile(PORTFOLIO, "utf8"));
 let cache = { tickers: {} };
@@ -38,6 +44,10 @@ for (const p of portfolios) {
   }
 }
 
+// Free fallback: count bullish vs bearish words in each post. It can't read
+// sarcasm or tell "buy" a stock from "buy" a hot dog, so it is a rough read.
+const BULL = /\b(bull(ish)?|buy(ing)?|bought|long|calls|moon(ing)?|breakout|beats?|upgraded?|outperform|surg(e|es|ing)|soar(s|ing)?|rall(y|ies|ying)|record high|all[- ]time high|ath|undervalued|accumulat(e|ing)|adding|ripping|raised? guidance|strong)\b|🚀|📈/gi;
+const BEAR = /\b(bear(ish)?|sell(ing)?|sold|short(ing)?|puts|crash(es|ing)?|dump(ing)?|plung(e|es|ing)|tank(s|ing)?|miss(es)?|downgraded?|underperform|overvalued|bubble|bankrupt(cy)?|lawsuit|fraud|cut(s)? guidance|layoffs|falls|drops|slid(es|ing)?|sinks?|weak)\b|📉/gi;
 // Shape of Claude's answer: one label per post plus a short summary.
 const SCHEMA = {
   type: "object",
@@ -82,11 +92,14 @@ for (const it of items.filter((x) => x.wiki)) {
   }
 }
 
-// ---- 2. Bluesky chatter, labelled by Claude --------------------------------
+// ---- 2. Bluesky chatter ----------------------------------------------------
 const { BLUESKY_HANDLE, BLUESKY_APP_PASSWORD, ANTHROPIC_API_KEY } = process.env;
-if (!BLUESKY_HANDLE || !BLUESKY_APP_PASSWORD || !ANTHROPIC_API_KEY) {
-  console.warn("Sentiment: Bluesky or Anthropic credentials not set, skipping chatter (keeping cached).");
+if (!BLUESKY_HANDLE || !BLUESKY_APP_PASSWORD) {
+  console.warn("Sentiment: Bluesky credentials not set, skipping chatter (keeping cached).");
+} else if (MODE === "claude" && !ANTHROPIC_API_KEY) {
+  console.warn("Sentiment: SENTIMENT_MODE=claude but ANTHROPIC_API_KEY not set, skipping chatter (keeping cached).");
 } else {
+  console.log(`Sentiment: chatter mode ${MODE}`);
   try {
     const login = await fetch("https://bsky.social/xrpc/com.atproto.server.createSession", {
       method: "POST",
@@ -95,12 +108,13 @@ if (!BLUESKY_HANDLE || !BLUESKY_APP_PASSWORD || !ANTHROPIC_API_KEY) {
     });
     if (!login.ok) throw new Error(`Bluesky login HTTP ${login.status}`);
     const { accessJwt } = await login.json();
-    const client = new Anthropic();
+    const client = MODE === "claude" ? new Anthropic() : null;
     const since = new Date(Date.now() - 7 * DAY).toISOString();
 
     for (const it of items) {
       const prev = cache.tickers?.[it.ticker]?.chatter;
-      if (!process.env.FORCE_SENTIMENT && prev?.classifiedAt && Date.now() - new Date(prev.classifiedAt) < RECLASSIFY_AFTER) continue;
+      // Don't let the free read overwrite a recent Claude reading.
+      if (MODE === "wordlist" && prev?.method === "claude" && Date.now() - new Date(prev.classifiedAt) < CLAUDE_KEEP_DAYS * DAY) continue;
       try {
         const seen = new Set();
         const posts = [];
@@ -112,9 +126,10 @@ if (!BLUESKY_HANDLE || !BLUESKY_APP_PASSWORD || !ANTHROPIC_API_KEY) {
           }
         }
         posts.sort((a, b) => b.likes - a.likes); // most-engaged posts first
-        const chatter = { source: "Bluesky", mentions: posts.length, classifiedAt: new Date().toISOString() };
-        if (posts.length >= 3) Object.assign(chatter, await classify(client, it, posts.slice(0, MAX_POSTS)));
-        else chatter.label = "Not enough chatter";
+        const chatter = { source: "Bluesky", method: MODE, mentions: posts.length, classifiedAt: new Date().toISOString() };
+        if (posts.length < 3) chatter.label = "Not enough chatter";
+        else if (MODE === "claude") Object.assign(chatter, await classify(client, it, posts.slice(0, MAX_POSTS)));
+        else Object.assign(chatter, wordlist(posts));
         out.tickers[it.ticker].chatter = chatter;
         console.log(`  ${it.ticker}: ${posts.length} posts, ${chatter.label}`);
       } catch (e) {
@@ -124,6 +139,23 @@ if (!BLUESKY_HANDLE || !BLUESKY_APP_PASSWORD || !ANTHROPIC_API_KEY) {
   } catch (e) {
     console.warn(`Sentiment: ${e.message}, keeping cached chatter.`);
   }
+}
+
+function wordlist(posts) {
+  const n = { bullish: 0, bearish: 0, neutral: 0 };
+  for (const p of posts) {
+    const d = (p.text.match(BULL)?.length ?? 0) - (p.text.match(BEAR)?.length ?? 0);
+    n[d > 0 ? "bullish" : d < 0 ? "bearish" : "neutral"]++;
+  }
+  return { sampled: posts.length, relevant: posts.length, ...n, ...scoreLabel(n, posts.length) };
+}
+
+function scoreLabel(n, relevant) {
+  const opinionated = n.bullish + n.bearish;
+  const score = opinionated ? (n.bullish - n.bearish) / opinionated : 0;
+  const label =
+    relevant < 5 ? "Not enough chatter" : opinionated < 5 ? "Mostly neutral" : score > 0.25 ? "Leaning bullish" : score < -0.25 ? "Leaning bearish" : "Mixed";
+  return { score: +score.toFixed(2), label };
 }
 
 // Cashtags match case-insensitively as whole tokens; names as whole words.
@@ -174,11 +206,7 @@ async function classify(client, it, posts) {
   const n = { bullish: 0, bearish: 0, neutral: 0, irrelevant: 0 };
   for (const l of labels) if (l.i >= 0 && l.i < posts.length) n[l.label]++;
   const relevant = n.bullish + n.bearish + n.neutral;
-  const opinionated = n.bullish + n.bearish;
-  const score = opinionated ? (n.bullish - n.bearish) / opinionated : 0;
-  const label =
-    relevant < 5 ? "Not enough chatter" : opinionated < 5 ? "Mostly neutral" : score > 0.25 ? "Leaning bullish" : score < -0.25 ? "Leaning bearish" : "Mixed";
-  return { sampled: posts.length, relevant, bullish: n.bullish, bearish: n.bearish, neutral: n.neutral, score: +score.toFixed(2), label, summary };
+  return { sampled: posts.length, relevant, bullish: n.bullish, bearish: n.bearish, neutral: n.neutral, ...scoreLabel(n, relevant), summary };
 }
 
 await writeFile(CACHE, JSON.stringify(out, null, 1));

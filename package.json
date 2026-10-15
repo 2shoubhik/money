@@ -10,7 +10,8 @@
     "build:offline": "astro build",
     "preview": "astro preview",
     "insiders": "node --env-file-if-exists=.env scripts/fetch-insiders.mjs",
-    "sentiment": "node --env-file-if-exists=.env scripts/fetch-sentiment.mjs"
+    "sentiment": "node --env-file-if-exists=.env scripts/fetch-sentiment.mjs",
+    "sentiment:claude": "SENTIMENT_MODE=claude node --env-file-if-exists=.env scripts/fetch-sentiment.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.134.0",
