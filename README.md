@@ -19,11 +19,9 @@ Tickers use Yahoo Finance symbols: `AAPL`, `BRK-B`, `SHOP.TO` (TSX), `RELIANCE.N
 
 Only weights and % returns are published. Don't add share counts or amounts to `portfolio.json`, because the repo (and the JSON) may be public.
 
-## Deploying
+## Deploying (Vercel)
 
-1. Create a GitHub repo and push this folder to it.
-2. In the repo, go to **Settings → Pages → Source** and choose **GitHub Actions**.
-3. The workflow in `.github/workflows/deploy.yml` builds on every push and every weekday after market close, so prices stay current without you doing anything.
-4. Optional: add a custom domain under Settings → Pages, then set `url` in `src/config.js`.
-
-Vercel or Netlify also work: import the repo, set the build command to `npm run build`, and set the output directory to `dist`.
+1. Push this folder to a GitHub repo.
+2. In Vercel, choose **Add New → Project**, import the repo, and keep the detected Astro settings (build `npm run build`, output `dist`).
+3. Daily prices: in Vercel, open **Settings → Git → Deploy Hooks** and create a hook on `main`. Copy its URL into GitHub as a repo secret named `VERCEL_DEPLOY_HOOK` (**Settings → Secrets and variables → Actions**). `.github/workflows/daily-rebuild.yml` then triggers a rebuild every weekday after market close.
+4. Set `url` in `src/config.js` to your Vercel (or custom) domain.

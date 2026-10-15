@@ -1,0 +1,15 @@
+# Vercel builds on every push. This triggers an extra rebuild each weekday
+# after the US close so prices stay fresh. Needs a repo secret
+# VERCEL_DEPLOY_HOOK (Vercel → Project → Settings → Git → Deploy Hooks).
+name: Daily rebuild
+
+on:
+  schedule:
+    - cron: "30 21 * * 1-5" # 21:30 UTC, after the NYSE/TSX close
+  workflow_dispatch:
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
